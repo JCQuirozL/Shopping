@@ -1,22 +1,22 @@
 ﻿@model Shopping.Models.CityViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Crear</h1>
+<h1>Editar</h1>
 
 <h4>Ciudad</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddCity">
+        <form asp-action="EditCity">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="Id" type="hidden"  />
-            <input asp-for="StateId" type="hidden" />
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="StateId" />
             <partial name="_City" />
             <div class="form-group mt-2">
-                <input type="submit" value="Crear" class="btn btn-primary" />
+                <input type="submit" value="Guardar" class="btn btn-primary" />
                 <a asp-action="DetailsState" asp-route-id="@Model.StateId" class="btn btn-outline-success">Regresar</a>
             </div>
         </form>
@@ -24,11 +24,13 @@
 </div>
 
 @*<div>
-    <a asp-action="Index" class="btn btn-outline-success" >Regresar</a>
-</div>*@
-
+    <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
+</div>
+*@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     }
+
+

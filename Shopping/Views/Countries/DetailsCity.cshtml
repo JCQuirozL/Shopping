@@ -1,0 +1,27 @@
+﻿@model Shopping.Data.Entities.City
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Detalles</h1>
+
+
+<div>
+    <h4>Ciudad</h4>
+    <hr />
+    @*<input type="hidden" asp-for="State.Id" />*@
+    <partial name="_CityDetails" />
+</div>
+<div> <a asp-action="DetailsState" asp-route-id="@Model?.State.Id" class="btn btn-outline-success">Regresar</a></div>
+<hr />
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+   
+}
+
+
