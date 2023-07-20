@@ -7,6 +7,10 @@ namespace Shopping.Helpers
     public interface IUserHelper
 
     {
+        Task<string> GeneratePasswordResetTokenAsync(User user);
+
+        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
+
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
 
         Task<IdentityResult> UpdateUserAsync(User user);

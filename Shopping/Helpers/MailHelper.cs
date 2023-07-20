@@ -7,6 +7,10 @@ namespace Shopping.Helpers
     public class MailHelper : IMailHelper
     {
         private readonly IConfiguration _configuration;
+        public MailHelper(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public Response SendMail(string toName, string toEmail, string subject, string body)
         {

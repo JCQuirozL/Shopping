@@ -23,6 +23,8 @@ namespace Shopping.Models
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string LastName { get; set; } = string.Empty;
 
+        public string FullName => $"{FirstName} {LastName}";
+
         [Display(Name = "Dirección")]
         [MaxLength(200, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
