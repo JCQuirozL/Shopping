@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
@@ -11,6 +7,7 @@ using Shopping.Models;
 
 namespace Shopping.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CountriesController : Controller
     {
         private readonly DataContext _context;
@@ -25,7 +22,7 @@ namespace Shopping.Controllers
         {
             return _context.Countries != null ?
                         View(await _context.Countries
-                        .Include(c=>c.States)
+                        .Include(c => c.States)
                         .ToListAsync()) :
                         Problem("Entity set 'DataContext.Countries'  is null.");
         }
@@ -39,8 +36,8 @@ namespace Shopping.Controllers
             }
 
             var country = await _context.Countries
-                .Include(c=>c.States)
-                .ThenInclude(s=>s.Cities)
+                .Include(c => c.States)
+                .ThenInclude(s => s.Cities)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (country == null)
             {
@@ -61,7 +58,7 @@ namespace Shopping.Controllers
 
             var state = await _context.States
                 .Include(s => s.Cities)
-                .Include(s=>s.Country)
+                .Include(s => s.Country)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (state == null)
@@ -242,7 +239,7 @@ namespace Shopping.Controllers
                 {
                     _context.Add(city);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(DetailsState), new { Id = model.StateId});
+                    return RedirectToAction(nameof(DetailsState), new { Id = model.StateId });
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
@@ -273,9 +270,9 @@ namespace Shopping.Controllers
             }
 
             var country = await _context.Countries
-                .Include(c=>c.States)
-                .ThenInclude(s=>s.Cities)
-                .FirstOrDefaultAsync(c=>c.Id == id);
+                .Include(c => c.States)
+                .ThenInclude(s => s.Cities)
+                .FirstOrDefaultAsync(c => c.Id == id);
             if (country == null)
             {
                 return NotFound();
@@ -336,7 +333,7 @@ namespace Shopping.Controllers
             }
 
             var state = await _context.States
-                .Include(s=>s.Country)
+                .Include(s => s.Country)
                 .Include(s => s.Cities)
                 .FirstOrDefaultAsync(c => c.Id == id);
             if (state == null)
@@ -367,11 +364,11 @@ namespace Shopping.Controllers
             }
 
             State state = await _context.States
-                .Include(s=>s.Cities)
-                .Include(s=>s.Country)
-                .FirstOrDefaultAsync(s=>s.Id == id);
+                .Include(s => s.Cities)
+                .Include(s => s.Country)
+                .FirstOrDefaultAsync(s => s.Id == id);
 
-            if(state == null)
+            if (state == null)
             {
                 return NotFound();
             }
@@ -401,7 +398,7 @@ namespace Shopping.Controllers
                 {
                     ModelState.AddModelError(string.Empty, exception.Message);
                 }
-                return RedirectToAction(nameof(Details), new {Id = model.CountryId});
+                return RedirectToAction(nameof(Details), new { Id = model.CountryId });
             }
             else
             {
@@ -419,7 +416,7 @@ namespace Shopping.Controllers
             }
 
             var city = await _context.Cities
-                .Include(c=>c.State)
+                .Include(c => c.State)
                 .FirstOrDefaultAsync(c => c.Id == id);
             if (city == null)
             {
@@ -499,7 +496,7 @@ namespace Shopping.Controllers
             }
 
             var country = await _context.Countries
-                .Include(c=>c.States)
+                .Include(c => c.States)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (country == null)
             {
@@ -538,7 +535,7 @@ namespace Shopping.Controllers
 
             var state = await _context.States
                 .Include(s => s.Cities)
-                .Include(s=>s.Country)
+                .Include(s => s.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (state == null)
             {
@@ -558,8 +555,8 @@ namespace Shopping.Controllers
                 return Problem("Entity set 'DataContext.Countries'  is null.");
             }
             var state = await _context.States
-                .Include(s=>s.Country)
-                .FirstOrDefaultAsync(s=>s.Id == id);
+                .Include(s => s.Country)
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             if (state != null)
             {
@@ -567,7 +564,7 @@ namespace Shopping.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new {Id = state.Country.Id});
+            return RedirectToAction(nameof(Details), new { Id = state.Country.Id });
         }
 
         public async Task<IActionResult> DeleteCity(int? id)

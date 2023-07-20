@@ -41,7 +41,7 @@
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning">Editar</a>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info">Detalles</a>
+                                    <a data-toggle="tooltip" title="Registrar estado/departamento" asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info">Detalles</a>
                                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Borrar</a>
                                 </td>
                             </tr>
@@ -52,6 +52,9 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/site.js"></script>
+
 
 @section Scripts {
     @{

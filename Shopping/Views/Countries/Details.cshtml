@@ -9,13 +9,14 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 
 
+
 <div>
     <h4>País</h4>
     <hr />
     <partial name="_CountriesDetails" />
 </div>
 <div>
-    <a asp-action="AddState" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Registrar estado / departamento</a> 
+    <a asp-action="AddState" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Registrar estado / departamento</a>
     <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
 </div>
 <hr />
@@ -32,7 +33,7 @@
                             <th>
                                 @Html.DisplayNameFor(model => model.States.FirstOrDefault().Name)
                             </th>
-                             <th>
+                            <th>
                                 @Html.DisplayNameFor(model => model.States.FirstOrDefault().CitiesNumber)
                             </th>
                             <th></th>
@@ -50,7 +51,7 @@
                                 </td>
                                 <td>
                                     <a asp-action="EditState" asp-route-id="@item.Id" class="btn btn-outline-warning">Editar</a>
-                                    <a asp-action="DetailsState" asp-route-id="@item.Id" class="btn btn-outline-info">Detalles</a>
+                                    <a data-toggle="tooltip" title="Registrar ciudad" asp-action="DetailsState"  asp-route-id="@item.Id" class="btn btn-outline-info">Detalles</a>
                                     <a asp-action="DeleteState" asp-route-id="@item.Id" class="btn btn-outline-danger">Borrar</a>
                                 </td>
                             </tr>
@@ -62,6 +63,8 @@
     </div>
 </div>
 
+<script src="~/js/site.js"></script>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -71,7 +74,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('#MyTable').DataTable({
-                    "language": {
+                "language": {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },
                 "aLengthMenu": [
@@ -81,6 +84,8 @@
             });
         });
     </script>
+    
+
 }
 
 

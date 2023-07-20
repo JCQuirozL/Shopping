@@ -1,0 +1,15 @@
+﻿body {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.alert {
+    background-color: red;
+    text-align: center;
+    /*padding: 1rem;*/
+    color: wheat;
+    /*position:absolute;*/
+}
+
+.t-tip{
+    /*padding:1rem;*/
+}
