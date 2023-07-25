@@ -7,6 +7,7 @@ using Shopping.Data.Entities;
 using Shopping.Enums;
 using Shopping.Helpers;
 using Shopping.Models;
+using Vereyon.Web;
 
 namespace Shopping.Controllers
 {
@@ -16,14 +17,16 @@ namespace Shopping.Controllers
         private readonly IUserHelper _userHelper;
         private readonly DataContext _context;
         private readonly ISelectListHelper _selectListHelper;
+        private readonly IFlashMessage _flashMessage;
         //private readonly IBlobHelper _blobHelper;
 
-        public AccountController(IMailHelper mailHelper, IUserHelper userHelper, DataContext context, ISelectListHelper selectListHelper/* IBlobHelper blobHelper*/)
+        public AccountController(IMailHelper mailHelper, IUserHelper userHelper, DataContext context, ISelectListHelper selectListHelper, IFlashMessage flashMessage/* IBlobHelper blobHelper*/)
         {
             _mailHelper = mailHelper;
             _context = context;
             _userHelper = userHelper;
             _selectListHelper = selectListHelper;
+            _flashMessage = flashMessage;
             //_blobHelper = blobHelper;
         }
 
@@ -359,6 +362,43 @@ namespace Shopping.Controllers
 
             return Json(state.Cities.OrderBy(c => c.Name));
         }
+
+        public IActionResult ResendToken()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendToken(ResendTokenViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _userHelper.GetUserAsync(model.Username);
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userid = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendMail(
+                    $"{model.FirstName} {model.LastName}",
+                    model.Username,
+                    "Shopping - Confirmación de Email",
+                    $"<h1>Shopping - Confirmación de Email</h1>" +
+                        $"Para habilitar el usuario por favor hacer click en el siguiente link:, " +
+                        $"<p><a href = \"{tokenLink}\">Confirmar Email</a></p>");
+                if (response.IsSuccess)
+                {
+                    _flashMessage.Info("Email Re-Envíado. Para poder ingresar al sistema, siga las instrucciones que han sido enviadas a su correo.");
+                    return RedirectToAction(nameof(Login));
+                }
+
+                _flashMessage.Danger(response.Message);
+            }
+            return View(model);
+        }
+
 
     }
 

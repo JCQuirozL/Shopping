@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Helpers;
+using Vereyon.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,10 @@ builder.Services.AddScoped<ISelectListHelper, SelectListHelper>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddScoped<ISelectListHelper, SelectListHelper>();
 builder.Services.AddScoped<IMailHelper, MailHelper>();
+//builder.Services.AddScoped<IFlashMessage, FlashMessage>();
+
+builder.Services.AddFlashMessage();
+
 
 
 builder.Services.AddIdentity<User, IdentityRole>(cfg =>

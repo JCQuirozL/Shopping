@@ -15,6 +15,9 @@ namespace Shopping.Controllers
         {
             _context = context;
         }
+
+
+
         // GET: Categories
         public async Task<IActionResult> Index()
         {
