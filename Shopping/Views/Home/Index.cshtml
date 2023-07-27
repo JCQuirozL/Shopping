@@ -1,10 +1,16 @@
-﻿@model IEnumerable<Shopping.Models.ProductsHomeViewModel>
+﻿@model Shopping.Models.HomeViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-@foreach (var item in Model)
+
+@if(Model.Quantity > 0)
+{
+    <a asp-action="ShowCart" class="btn btn-outline-primary">Ver Carro de Compras (@Model.Quantity)</a>
+}
+
+@foreach (var item in Model.Products)
 {
     <div class="row">
         @if (item.Product1 != null)
@@ -12,7 +18,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card_title">@item.Product1.Name</div>
-                    <div class="card_body">
+                    <div class="zoom card_body">
                         <img src="@item.Product1.ImageFullPath" style="height:150px; max-width:280px;" />
                         <p class="mt-2">
                             @item.Product1.Description
@@ -31,7 +37,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card_title">@item.Product2.Name</div>
-                    <div class="card_body">
+                    <div class="zoom card_body">
                         <img src="@item.Product2.ImageFullPath" style="height:150px; max-width:280px;" />
                         <p class="mt-2">
                             @item.Product2.Description
@@ -50,7 +56,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card_title">@item.Product3.Name</div>
-                    <div class="card_body">
+                    <div class="zoom card_body">
                         <img src="@item.Product3.ImageFullPath" style="height:150px; max-width:280px;" />
                         <p class="mt-2">
                             @item.Product3.Description
@@ -69,7 +75,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card_title">@item.Product4.Name</div>
-                    <div class="card_body">
+                    <div class="zoom card_body">
                         <img src="@item.Product4.ImageFullPath" style="height:150px; max-width:280px;" />
                         <p class="mt-2">
                             @item.Product4.Description

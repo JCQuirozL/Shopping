@@ -19,6 +19,8 @@ namespace Shopping.Data
         public DbSet<ProductImage> ProductImages { get; set; }
 
         public DbSet<State> States { get; set; }
+
+        public DbSet<TemporalSale> TemporalSales { get; set; }
         public DbSet<User> Users { get; set; }
 
 
