@@ -50,6 +50,8 @@ builder.Services.AddIdentity<User, IdentityRole>(cfg =>
 }).AddDefaultTokenProviders()
 .AddEntityFrameworkStores<DataContext>();
 
+builder.Services.AddScoped<IOrdersHelper, OrdersHelper>();
+
 var app = builder.Build();
 
 SeedData(app);
