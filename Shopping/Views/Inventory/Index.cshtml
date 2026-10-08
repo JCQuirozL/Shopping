@@ -1,0 +1,48 @@
+@model IEnumerable<Shopping.Data.Entities.Product>
+@{
+    ViewData["Title"] = "Inventario";
+}
+
+<h1 class="mb-4">Gestión de Inventario</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Buscar producto..." />
+    </div>
+    <div class="col-md-3">
+        <div class="form-check mt-2">
+            <input type="checkbox" class="form-check-input" name="lowStockOnly" value="true" id="lowStockOnly" @(ViewBag.LowStockOnly ? "checked" : "") />
+            <label class="form-check-label" for="lowStockOnly">Solo bajo stock (&le; @ViewBag.LowStockThreshold)</label>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
+</form>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Categorías</th>
+            <th>Existencia</th>
+            <th>Precio</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr class="@(product.Stock <= (int)ViewBag.LowStockThreshold ? "table-danger" : "")">
+                <td>@product.Name</td>
+                <td>@string.Join(", ", product.ProductCategories?.Select(pc => pc.Category.Name) ?? Enumerable.Empty<string>())</td>
+                <td>@product.Stock.ToString("N0")</td>
+                <td>@product.Price.ToString("C2")</td>
+                <td>
+                    <a asp-action="AdjustStock" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">Ajustar</a>
+                    <a asp-action="Movements" asp-route-id="@product.Id" class="btn btn-sm btn-outline-secondary">Movimientos</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

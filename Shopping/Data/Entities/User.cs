@@ -51,6 +51,9 @@ namespace Shopping.Data.Entities
 
         public ICollection<Sale> Sales { get; set; }
 
+        [JsonIgnore]
+        public ICollection<Address> Addresses { get; set; }
+
 
     }
 }

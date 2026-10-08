@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+@inject Shopping.Helpers.ITranslator Localizer
+<html lang="@System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName">
 <head>
     
     <meta charset="utf-8" />
@@ -16,77 +17,139 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/app.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-bag-shopping text-white"></i>Shopping</a>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-brand sticky-top">
+            <div class="container-xl flex-wrap">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-bag-shopping icon-lg"></i> Shopping</a>
+
+                <form class="search-bar d-none d-md-flex" method="get" asp-controller="Home" asp-action="Index" role="search">
+                    <input class="form-control" type="search" name="search" placeholder="@Localizer["SearchPlaceholder"]" value="@Context.Request.Query["search"]" />
+                    <button class="btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="d-flex align-items-center order-lg-3 ms-auto navbar-actions">
+                    <div class="dropdown">
+                        <a class="nav-link text-white dropdown-toggle region-toggle" href="#" id="regionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-earth-americas"></i>
+                            <span class="d-none d-sm-inline">@(Context.Request.Cookies["Region"] switch { "BR" => "Brasil", "US" => "United States", _ => "México" })</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="regionDropdown">
+                            <li><h6 class="dropdown-header">@Localizer["Region"]</h6></li>
+                            <li>
+                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="MX" asp-route-returnUrl="@Context.Request.Path+Context.Request.QueryString">
+                                    🇲🇽 México <span class="text-muted small">(MXN · Español)</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="BR" asp-route-returnUrl="@Context.Request.Path+Context.Request.QueryString">
+                                    🇧🇷 Brasil <span class="text-muted small">(BRL · Português)</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="US" asp-route-returnUrl="@Context.Request.Path+Context.Request.QueryString">
+                                    🇺🇸 United States <span class="text-muted small">(USD · English)</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="dropdown">
+                            <a class="nav-link text-white dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-circle-user"></i> <span class="d-none d-sm-inline">@User.Identity.Name</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="ChangeUser"><i class="fa-solid fa-user-pen"></i> @Localizer["MyAccount"]</a></li>
+                                @if (!User.IsInRole("Admin"))
+                                {
+                                    <li><a class="dropdown-item" asp-controller="MyOrders" asp-action="Index"><i class="fa-solid fa-box"></i> @Localizer["NavMyOrders"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Addresses" asp-action="Index"><i class="fa-solid fa-location-dot"></i> @Localizer["NavMyAddresses"]</a></li>
+                                }
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="fa-solid fa-right-from-bracket"></i> @Localizer["Logout"]</a></li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="nav-link text-white" asp-controller="Account" asp-action="Login"><i class="fa-solid fa-circle-user"></i> @Localizer["Login"]</a>
+                    }
+
+                    @await Component.InvokeAsync("CartBadge")
+                </div>
+
+                <div class="navbar-collapse collapse w-100 order-lg-2">
+                    <form class="search-bar d-flex d-md-none my-2" method="get" asp-controller="Home" asp-action="Index" role="search">
+                        <input class="form-control" type="search" name="search" placeholder="@Localizer["SearchPlaceholder"]" value="@Context.Request.Query["search"]" />
+                        <button class="btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+
+                    <ul class="navbar-nav secondary-nav flex-grow-1">
+                        @await Component.InvokeAsync("CategoriesMenu")
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index" asp-route-onSale="true"><i class="fa-solid fa-bolt text-warning"></i> @Localizer["NavOffers"]</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-chart-line"></i> @Localizer["NavTrends"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy"><i class="fa-solid fa-circle-question"></i> @Localizer["NavHelp"]</a>
+                        </li>
+
                         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Users" asp-action="Index">Usuarios</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Countries" asp-action="Index">Geografía</a>
+                            <li class="nav-item ms-lg-auto">
+                                <a class="nav-link text-white" asp-controller="Dashboard" asp-action="Index">@Localizer["NavDashboard"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Categories" asp-action="Index">Categorías</a>
+                                <a class="nav-link text-white" asp-controller="Orders" asp-action="Index">@Localizer["NavOrders"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Products" asp-action="Index">Productos</a>
-                            </li>
-                        }
-
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Políticas</a>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="ChangeUser">@User.Identity.Name</a>
+                                <a class="nav-link text-white" asp-controller="Inventory" asp-action="Index">@Localizer["NavInventory"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Logout">Cerrar Sesión</a>
+                                <a class="nav-link text-white" asp-controller="Customers" asp-action="Index">@Localizer["NavCustomers"]</a>
                             </li>
-                        }
-                        else
-                        {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Login">Iniciar Sesión</a>
+                                <a class="nav-link text-white" asp-controller="Users" asp-action="Index">@Localizer["NavUsers"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Countries" asp-action="Index">@Localizer["NavGeography"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Categories" asp-action="Index">@Localizer["NavCategories"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Products" asp-action="Index">@Localizer["NavProducts"]</a>
                             </li>
                         }
                     </ul>
-
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-xl">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - Shopping - <a asp-area="" asp-controller="Home" asp-action="Privacy">Políticas</a>
+        <div class="container-xl">
+            &copy; 2023 - @Localizer["Footer"] - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["NavPrivacy"]</a>
         </div>
     </footer>
+
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     @*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -95,3 +158,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

@@ -1,0 +1,22 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "dotnet build",
+			"type": "shell",
+			"command": "dotnet build Shopping.sln",
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "ef migrations add",
+			"type": "shell",
+			"command": "dotnet ef migrations add AddAdminFeatures --project Shopping/Shopping.csproj --startup-project Shopping/Shopping.csproj",
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}

@@ -1,0 +1,68 @@
+@model Shopping.Data.Entities.Sale
+@inject Shopping.Helpers.ITranslator Localizer
+@{
+    ViewData["Title"] = "Detalle de Pedido";
+}
+
+<h1 class="mb-4">Pedido #@Model.Id</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="panel panel-default p-3">
+            <h5>Información del cliente</h5>
+            <p><strong>Cliente:</strong> @Model.User?.FullName</p>
+            <p><strong>Destinatario:</strong> @Model.ShippingRecipient</p>
+            <p><strong>Teléfono:</strong> @Model.ShippingPhone</p>
+            <p><strong>Dirección de envío:</strong> @Model.ShippingAddress</p>
+            <p><strong>Comentarios:</strong> @Model.Remarks</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default p-3">
+            <h5>Envío y estado actual</h5>
+            <p><strong>Estado:</strong> <span class="badge bg-secondary">@Localizer[$"Status_{Model.OrderStatus}"]</span></p>
+            <p><strong>Transportadora:</strong> @Model.Carrier</p>
+            <p><strong>Número de guía:</strong> @Model.TrackingNumber</p>
+            <p><strong>Entrega estimada:</strong> @(Model.EstimatedDeliveryDate?.ToString("dd/MM/yyyy") ?? "N/A")</p>
+            <a asp-action="ChangeStatus" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Actualizar estado</a>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default p-3 mb-4">
+    <h5>Productos</h5>
+    <table class="table table-sm table-striped">
+        <thead><tr><th>Producto</th><th>Cantidad</th><th>Valor</th></tr></thead>
+        <tbody>
+            @foreach (var detail in Model.SaleDetails)
+            {
+                <tr>
+                    <td>@detail.Product?.Name</td>
+                    <td>@detail.Quantity.ToString("N0")</td>
+                    <td>@detail.Value.ToString("C2")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr><th colspan="2" class="text-end">Total</th><th>@Model.Value.ToString("C2")</th></tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="panel panel-default p-3">
+    <h5>Seguimiento del pedido (Tracking)</h5>
+    <ul class="list-group">
+        @foreach (var history in Model.StatusHistories)
+        {
+            <li class="list-group-item">
+                <strong>@Localizer[$"Status_{history.OrderStatus}"]</strong> - @history.Date.ToString("dd/MM/yyyy HH:mm")
+                @if (!string.IsNullOrWhiteSpace(history.Notes))
+                {
+                    <div class="text-muted">@history.Notes</div>
+                }
+            </li>
+        }
+    </ul>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">Volver</a>

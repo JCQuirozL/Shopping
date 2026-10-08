@@ -27,7 +27,19 @@ namespace Shopping.Helpers
                 User = model.User,
                 Remarks = model.Remarks,
                 SaleDetails = new List<SaleDetail>(),
-                OrderStatus = OrderStatus.Nuevo
+                OrderStatus = OrderStatus.Pendiente,
+                ShippingRecipient = model.ShippingRecipient,
+                ShippingPhone = model.ShippingPhone,
+                ShippingAddress = model.ShippingAddress,
+                StatusHistories = new List<OrderStatusHistory>
+                {
+                    new OrderStatusHistory
+                    {
+                        OrderStatus = OrderStatus.Pendiente,
+                        Date = DateTime.UtcNow,
+                        Notes = "Pedido recibido.",
+                    }
+                },
             };
 
             foreach (TemporalSale? item in model.TemporalSales)

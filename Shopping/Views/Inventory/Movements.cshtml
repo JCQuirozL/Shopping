@@ -1,0 +1,27 @@
+@model IEnumerable<Shopping.Data.Entities.InventoryMovement>
+@{
+    ViewData["Title"] = "Movimientos de Inventario";
+    var product = ViewBag.Product as Shopping.Data.Entities.Product;
+}
+
+<h1 class="mb-4">Movimientos - @product?.Name</h1>
+
+<p><a asp-action="AdjustStock" asp-route-id="@product?.Id" class="btn btn-primary">Nuevo Ajuste</a> <a asp-action="Index" class="btn btn-outline-secondary">Volver</a></p>
+
+<table class="table table-striped">
+    <thead>
+        <tr><th>Fecha</th><th>Cambio</th><th>Existencia resultante</th><th>Motivo</th><th>Usuario</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var movement in Model)
+        {
+            <tr>
+                <td>@movement.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td class="@(movement.QuantityChange < 0 ? "text-danger" : "text-success")">@movement.QuantityChange.ToString("+0.##;-0.##")</td>
+                <td>@movement.ResultingStock.ToString("N0")</td>
+                <td>@movement.Reason</td>
+                <td>@movement.UserName</td>
+            </tr>
+        }
+    </tbody>
+</table>

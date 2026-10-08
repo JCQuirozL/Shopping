@@ -2,11 +2,12 @@
 {
     public enum OrderStatus
     {
-        Nuevo,
-        Despachado,
-        Enviado,
+        Pendiente,
         Confirmado,
+        EnPreparacion,
+        Despachado,
+        EnCamino,
+        Entregado,
         Cancelado
-
     }
 }

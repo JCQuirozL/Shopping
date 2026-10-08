@@ -38,10 +38,9 @@ namespace Shopping.Data.Entities
         [Display(Name = "Fotos")]
         public int ImagesNumber => ProductImages == null ? 0 : ProductImages.Count;
 
-        //TODO: Pending to change to the correct path
         [Display(Name = "Foto")]
         public string ImageFullPath => ProductImages == null || ProductImages.Count == 0
-            ? $"https://localhost:7102/img/noimage.png"
+            ? $"https://placehold.co/500x500/1f2a44/f7f5f2?font=poppins&text={Uri.EscapeDataString(Name ?? "Shopping")}"
             : ProductImages.FirstOrDefault().ImageFullPath;
 
         public ICollection<SaleDetail> SaleDetails { get; set; }

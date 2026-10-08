@@ -11,11 +11,12 @@ namespace Shopping.Data.Entities
         [Display(Name = "Foto")]
         public Guid ImageId { get; set; }
 
-        //TODO: Pending to change to the correct path
+        public string Extension { get; set; } = ".jpg";
+
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:7102/img/noimage.png"
-            : $"https://shopping4.blob.core.windows.net/products/{ImageId}";
+            ? $"https://placehold.co/500x500/1f2a44/f7f5f2?font=poppins&text={Uri.EscapeDataString(Product?.Name ?? "Shopping")}"
+            : $"/images/products/{ImageId}{Extension}";
 
     }
 }

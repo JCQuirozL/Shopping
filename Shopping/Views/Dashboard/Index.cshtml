@@ -1,0 +1,134 @@
+@model Shopping.Models.DashboardViewModel
+@inject Shopping.Helpers.ITranslator Localizer
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="mb-4">@Localizer["DashboardTitle"]</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="panel panel-default p-3">
+            <div class="text-muted">@Localizer["TotalOrders"]</div>
+            <div class="h3 mb-0">@Model.TotalOrders.ToString("N0")</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default p-3">
+            <div class="text-muted">@Localizer["TotalRevenue"]</div>
+            <div class="h3 mb-0">@Model.TotalRevenue.ToString("C2")</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default p-3">
+            <div class="text-muted">@Localizer["TotalCustomers"]</div>
+            <div class="h3 mb-0">@Model.TotalCustomers.ToString("N0")</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default p-3">
+            <div class="text-muted">@Localizer["LowStock"]</div>
+            <div class="h3 mb-0 text-danger">@Model.LowStockCount.ToString("N0")</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="panel panel-default p-3">
+            <h5>@Localizer["SalesLast30Days"]</h5>
+            <canvas id="salesChart" height="120"></canvas>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default p-3">
+            <h5>@Localizer["OrdersByStatus"]</h5>
+            <canvas id="statusChart" height="160"></canvas>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default p-3">
+            <h5>@Localizer["TopProducts"]</h5>
+            <canvas id="topProductsChart" height="160"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="panel panel-default p-3">
+            <h5>@Localizer["RecentOrders"]</h5>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Id</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th>Valor</th></tr></thead>
+                <tbody>
+                    @foreach (var sale in Model.RecentOrders)
+                    {
+                        <tr>
+                            <td><a asp-controller="Orders" asp-action="Details" asp-route-id="@sale.Id">#@sale.Id</a></td>
+                            <td>@sale.Date.ToString("dd/MM/yyyy")</td>
+                            <td>@sale.User?.FullName</td>
+                            <td><span class="badge bg-secondary">@Localizer[$"Status_{sale.OrderStatus}"]</span></td>
+                            <td>@sale.Value.ToString("C2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default p-3">
+            <h5>@Localizer["LowStockProducts"]</h5>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Producto</th><th>Existencia</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var product in Model.LowStockProducts)
+                    {
+                        <tr>
+                            <td>@product.Name</td>
+                            <td class="text-danger">@product.Stock.ToString("N0")</td>
+                            <td><a asp-controller="Inventory" asp-action="AdjustStock" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">Ajustar</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script>
+        const salesDays = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesDays));
+        const salesAmounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesAmounts));
+        const statusLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OrderStatusLabels));
+        const statusCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OrderStatusCounts));
+        const topProductNames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopProductNames));
+        const topProductQuantities = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopProductQuantities));
+
+        new Chart(document.getElementById('salesChart'), {
+            type: 'line',
+            data: {
+                labels: salesDays,
+                datasets: [{ label: 'Ventas', data: salesAmounts, borderColor: '#1f2a44', backgroundColor: 'rgba(31,42,68,.15)', tension: .3, fill: true }]
+            },
+            options: { plugins: { legend: { display: false } } }
+        });
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{ data: statusCounts, backgroundColor: ['#6c757d', '#0d6efd', '#fd7e14', '#20c997', '#0dcaf0', '#198754', '#dc3545'] }]
+            }
+        });
+
+        new Chart(document.getElementById('topProductsChart'), {
+            type: 'bar',
+            data: {
+                labels: topProductNames,
+                datasets: [{ label: 'Unidades vendidas', data: topProductQuantities, backgroundColor: '#1f2a44' }]
+            },
+            options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+        });
+    </script>
+}

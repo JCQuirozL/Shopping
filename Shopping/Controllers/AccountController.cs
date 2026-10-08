@@ -7,6 +7,7 @@ using Shopping.Data.Entities;
 using Shopping.Enums;
 using Shopping.Helpers;
 using Shopping.Models;
+using System.Security.Claims;
 using Vereyon.Web;
 
 namespace Shopping.Controllers
@@ -18,15 +19,19 @@ namespace Shopping.Controllers
         private readonly DataContext _context;
         private readonly ISelectListHelper _selectListHelper;
         private readonly IFlashMessage _flashMessage;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
         //private readonly IBlobHelper _blobHelper;
 
-        public AccountController(IMailHelper mailHelper, IUserHelper userHelper, DataContext context, ISelectListHelper selectListHelper, IFlashMessage flashMessage/* IBlobHelper blobHelper*/)
+        public AccountController(IMailHelper mailHelper, IUserHelper userHelper, DataContext context, ISelectListHelper selectListHelper, IFlashMessage flashMessage, SignInManager<User> signInManager, UserManager<User> userManager/* IBlobHelper blobHelper*/)
         {
             _mailHelper = mailHelper;
             _context = context;
             _userHelper = userHelper;
             _selectListHelper = selectListHelper;
             _flashMessage = flashMessage;
+            _signInManager = signInManager;
+            _userManager = userManager;
             //_blobHelper = blobHelper;
         }
 
@@ -328,6 +333,81 @@ namespace Shopping.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        {
+            string redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            Microsoft.AspNetCore.Authentication.AuthenticationProperties properties =
+                _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
+        }
+
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (!string.IsNullOrEmpty(remoteError))
+            {
+                ModelState.AddModelError(string.Empty, $"Error del proveedor externo: {remoteError}");
+                return View(nameof(Login), new LoginViewModel());
+            }
+
+            ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            Microsoft.AspNetCore.Identity.SignInResult signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (signInResult.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            string email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                ModelState.AddModelError(string.Empty, "No se pudo obtener el correo de la cuenta externa.");
+                return View(nameof(Login), new LoginViewModel());
+            }
+
+            User user = await _userHelper.GetUserAsync(email);
+            if (user == null)
+            {
+                string firstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? email.Split('@')[0];
+                string lastName = info.Principal.FindFirstValue(ClaimTypes.Surname) ?? info.LoginProvider;
+
+                user = new User
+                {
+                    Email = email,
+                    UserName = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Document = "N/A",
+                    Address = "N/A",
+                    PhoneNumber = string.Empty,
+                    City = await _context.Cities.FirstOrDefaultAsync(),
+                    UserType = UserType.User,
+                };
+
+                IdentityResult createResult = await _userHelper.AddUserAsync(user, Guid.NewGuid().ToString("N"));
+                if (!createResult.Succeeded)
+                {
+                    ModelState.AddModelError(string.Empty, "No se pudo crear la cuenta con el proveedor externo.");
+                    return View(nameof(Login), new LoginViewModel());
+                }
+
+                await _userHelper.AddUserToRoleAsync(user, UserType.User.ToString());
+                string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Logout()

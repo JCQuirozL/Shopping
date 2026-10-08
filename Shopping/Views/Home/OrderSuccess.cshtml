@@ -2,11 +2,33 @@
 
     ViewData["Title"] = "Order Success";
 }
-<div class="row">
-    <div class="col-md-4 offset-4">
-        <i class="fa-solid fa-bag-shopping text-black"></i>
-        <h2>¡Gracias!</h2>
-        <h4>Su pedido fue registrado en nuestro sistema, pronto uno de nuestros asesores se comunicará con usted.</h4>
-        <a asp-action="Index" class="mt-2 btn btn-outline-success">Inicio</a>
-    </div>
+<div class="empty-state">
+    <i class="fa-solid fa-circle-check icon-lg text-accent"></i>
+    <h2>¡Gracias por tu compra!</h2>
+    <h5 class="text-muted">Tu pedido fue registrado en nuestro sistema, pronto uno de nuestros asesores se comunicará contigo.</h5>
+
+    @if (ViewBag.PaymentMethod != null)
+    {
+        <div class="cart-summary mx-auto mt-4" style="max-width: 360px; text-align: left;">
+            <div class="cart-summary_row">
+                <span>Método de pago</span>
+                <strong>
+                    @(ViewBag.PaymentMethod switch
+                    {
+                        "CreditCard" => "Tarjeta de Crédito",
+                        "DebitCard" => "Tarjeta de Débito",
+                        "PayPal" => "PayPal",
+                        "Cash" => "Contra Entrega",
+                        _ => ViewBag.PaymentMethod
+                    })
+                </strong>
+            </div>
+            <div class="cart-summary_row cart-summary_total">
+                <span>Total pagado</span>
+                <strong>@ViewBag.PaymentTotal</strong>
+            </div>
+        </div>
+    }
+
+    <a asp-action="Index" class="btn btn-primary mt-4">Seguir Comprando</a>
 </div>

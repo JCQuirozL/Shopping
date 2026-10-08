@@ -1,0 +1,43 @@
+@model IEnumerable<Shopping.Data.Entities.Sale>
+@inject Shopping.Helpers.ITranslator Localizer
+@{
+    ViewData["Title"] = "Pedidos";
+}
+
+<h1 class="mb-4">Gestión de Pedidos</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">Todos los estados</option>
+            @foreach (Shopping.Enums.OrderStatus status in Enum.GetValues(typeof(Shopping.Enums.OrderStatus)))
+            {
+                <option value="@status" selected="@(ViewBag.Status != null && ViewBag.Status.ToString() == status.ToString())">@Localizer[$"Status_{status}"]</option>
+            }
+        </select>
+    </div>
+</form>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr><th>Id</th><th>Fecha</th><th>Cliente</th><th>Líneas</th><th>Valor</th><th>Estado</th><th>Guía</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var sale in Model)
+        {
+            <tr>
+                <td>#@sale.Id</td>
+                <td>@sale.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@sale.User?.FullName</td>
+                <td>@sale.Lines</td>
+                <td>@sale.Value.ToString("C2")</td>
+                <td><span class="badge bg-secondary">@Localizer[$"Status_{sale.OrderStatus}"]</span></td>
+                <td>@sale.TrackingNumber</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@sale.Id" class="btn btn-sm btn-outline-info"><i class="fa-solid fa-circle-info"></i></a>
+                    <a asp-action="ChangeStatus" asp-route-id="@sale.Id" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-truck"></i> Estado</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -29,6 +29,8 @@ namespace Shopping.Controllers
         [Authorize]
         public IActionResult OrderSuccess()
         {
+            ViewBag.PaymentMethod = TempData["PaymentMethod"];
+            ViewBag.PaymentTotal = TempData["PaymentTotal"];
             return View();
         }
 
@@ -43,24 +45,127 @@ namespace Shopping.Controllers
                 return NotFound();
             }
 
-            model.User = user;
+            List<TemporalSale> temporalSales = await _context.TemporalSales
+                .Include(ts => ts.Product)
+                .Where(ts => ts.User.Id == user.Id)
+                .ToListAsync();
 
-            model.TemporalSales = await _context.TemporalSales
-            .Include(ts => ts.Product)
-            .ThenInclude(p => p.ProductImages)
-            .Where(ts => ts.User.Id == user.Id)
-            .ToListAsync();
-
-            Response response = await _ordersHelper.ProcessOrderAsync(model);
-
-            if (response.IsSuccess)
+            if (!temporalSales.Any())
             {
-                return RedirectToAction(nameof(OrderSuccess));
+                return RedirectToAction(nameof(ShowCart));
             }
 
-            ModelState.AddModelError(string.Empty, response.Message);
+            TempData["CartRemarks"] = model.Remarks;
+            TempData["ShippingRecipient"] = model.ShippingRecipient;
+            TempData["ShippingPhone"] = model.ShippingPhone;
+            TempData["ShippingAddress"] = model.ShippingAddress;
+            return RedirectToAction(nameof(Payment));
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Payment()
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            List<TemporalSale> temporalSales = await _context.TemporalSales
+                .Include(ts => ts.Product)
+                .Where(ts => ts.User.Id == user.Id)
+                .ToListAsync();
+
+            if (!temporalSales.Any())
+            {
+                return RedirectToAction(nameof(ShowCart));
+            }
+
+            Address defaultAddress = await _context.Addresses
+                .Include(a => a.City)
+                .Where(a => a.User.Id == user.Id)
+                .OrderByDescending(a => a.IsDefault)
+                .FirstOrDefaultAsync();
+
+            PaymentViewModel model = new()
+            {
+                Items = temporalSales.Sum(ts => ts.Quantity),
+                Total = temporalSales.Sum(ts => ts.Value),
+                ShippingRecipient = TempData.Peek("ShippingRecipient") as string ?? user.FullName,
+                ShippingPhone = TempData.Peek("ShippingPhone") as string ?? user.PhoneNumber,
+                ShippingAddress = TempData.Peek("ShippingAddress") as string ??
+                    (defaultAddress != null ? defaultAddress.FullAddress : $"{user.Address}, {user.City?.Name}"),
+            };
 
             return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Payment(PaymentViewModel model)
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            List<TemporalSale> temporalSales = await _context.TemporalSales
+                .Include(ts => ts.Product)
+                .ThenInclude(p => p.ProductImages)
+                .Where(ts => ts.User.Id == user.Id)
+                .ToListAsync();
+
+            if (!temporalSales.Any())
+            {
+                return RedirectToAction(nameof(ShowCart));
+            }
+
+            model.Items = temporalSales.Sum(ts => ts.Quantity);
+            model.Total = temporalSales.Sum(ts => ts.Value);
+
+            bool requiresCard = model.PaymentMethod is "CreditCard" or "DebitCard";
+            if (requiresCard)
+            {
+                string digits = new string((model.CardNumber ?? string.Empty).Where(char.IsDigit).ToArray());
+
+                if (digits.Length < 13
+                    || string.IsNullOrWhiteSpace(model.CardHolder)
+                    || string.IsNullOrWhiteSpace(model.ExpirationDate)
+                    || string.IsNullOrWhiteSpace(model.Cvv))
+                {
+                    ModelState.AddModelError(string.Empty, "Revisa los datos de la tarjeta, hay campos incompletos o inválidos.");
+                    return View(model);
+                }
+
+                if (digits.EndsWith("0000"))
+                {
+                    ModelState.AddModelError(string.Empty, "Pago rechazado por el banco emisor: fondos insuficientes. Intenta con otra tarjeta.");
+                    return View(model);
+                }
+            }
+
+            ShowCartViewModel cartModel = new()
+            {
+                User = user,
+                Remarks = TempData["CartRemarks"] as string,
+                TemporalSales = temporalSales,
+                ShippingRecipient = model.ShippingRecipient,
+                ShippingPhone = model.ShippingPhone,
+                ShippingAddress = model.ShippingAddress,
+            };
+
+            Response response = await _ordersHelper.ProcessOrderAsync(cartModel);
+            if (!response.IsSuccess)
+            {
+                ModelState.AddModelError(string.Empty, response.Message);
+                return View(model);
+            }
+
+            TempData["PaymentMethod"] = model.PaymentMethod;
+            TempData["PaymentTotal"] = model.Total.ToString("C2");
+            return RedirectToAction(nameof(OrderSuccess));
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -181,10 +286,21 @@ namespace Shopping.Controllers
             .Where(ts => ts.User.Id == user.Id)
             .ToListAsync();
 
+            List<Address> savedAddresses = await _context.Addresses
+                .Include(a => a.City)
+                .Where(a => a.User.Id == user.Id)
+                .ToListAsync();
+
+            Address defaultAddress = savedAddresses.FirstOrDefault(a => a.IsDefault) ?? savedAddresses.FirstOrDefault();
+
             ShowCartViewModel model = new()
             {
                 User = user,
                 TemporalSales = temporalSales,
+                SavedAddresses = savedAddresses,
+                ShippingRecipient = user.FullName,
+                ShippingPhone = user.PhoneNumber,
+                ShippingAddress = defaultAddress != null ? defaultAddress.FullAddress : $"{user.Address}, {user.City?.Name}",
             };
             return View(model);
         }
@@ -297,40 +413,41 @@ namespace Shopping.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search, int? categoryId, bool onSale = false)
         {
-            List<Product>? products = await _context.Products
+            IQueryable<Product> query = _context.Products
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductCategories)
-                .Where(p => p.Stock > 0)
-                .OrderBy(p => p.Description)
-                .ToListAsync();
-            List<ProductsHomeViewModel> productsHome = new() { new ProductsHomeViewModel() };
-            int i = 1;
-            foreach (Product? product in products)
+                .ThenInclude(pc => pc.Category)
+                .Where(p => p.Stock > 0);
+
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                if (i == 1)
-                {
-                    productsHome.LastOrDefault().Product1 = product;
-                }
-                if (i == 2)
-                {
-                    productsHome.LastOrDefault().Product2 = product;
-                }
-                if (i == 3)
-                {
-                    productsHome.LastOrDefault().Product3 = product;
-                }
-                if (i == 4)
-                {
-                    productsHome.LastOrDefault().Product4 = product;
-                    productsHome.Add(new ProductsHomeViewModel());
-                    i = 0;
-                }
-                i++;
+                query = query.Where(p => p.Name.Contains(search) || p.Description.Contains(search));
             }
 
-            HomeViewModel model = new() { Products = productsHome };
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                query = query.Where(p => p.ProductCategories.Any(pc => pc.Category.Id == categoryId.Value));
+            }
+
+            List<Product> products = await query
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+
+            if (onSale)
+            {
+                products = products.Where(p => DiscountHelper.HasDiscount(p.Id)).ToList();
+            }
+
+            HomeViewModel model = new()
+            {
+                Products = products,
+                Categories = await _context.Categories.OrderBy(c => c.Name).ToListAsync(),
+                Search = search,
+                CategoryId = categoryId,
+            };
+
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user != null)
             {

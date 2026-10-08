@@ -13,13 +13,13 @@ namespace Shopping.Controllers
     {
         private readonly DataContext _context;
         private readonly ISelectListHelper _selectListHelper;
-        //private readonly IBlobHelper _blobHelper;
+        private readonly IImageHelper _imageHelper;
 
-        public ProductsController(DataContext context, ISelectListHelper selectListHelper/*, IBlobHelper blobHelper*/)
+        public ProductsController(DataContext context, ISelectListHelper selectListHelper, IImageHelper imageHelper)
         {
             _context = context;
             _selectListHelper = selectListHelper;
-            //_blobHelper = blobHelper;
+            _imageHelper = imageHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -48,10 +48,11 @@ namespace Shopping.Controllers
             if (ModelState.IsValid)
             {
                 Guid imageId = Guid.Empty;
-                //if (model.ImageFile != null)
-                //{
-                //    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
-                //}
+                string extension = ".jpg";
+                if (model.ImageFile != null)
+                {
+                    (imageId, extension) = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
+                }
 
                 Product product = new()
                 {
@@ -73,7 +74,7 @@ namespace Shopping.Controllers
                 {
                     product.ProductImages = new List<ProductImage>()
             {
-                new ProductImage { ImageId = imageId }
+                new ProductImage { ImageId = imageId, Extension = extension }
             };
                 }
 
@@ -216,16 +217,18 @@ namespace Shopping.Controllers
             if (ModelState.IsValid)
             {
                 Guid imageId = Guid.Empty;
-                //if (model.ImageFile != null)
-                //{
-                //    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
-                //}
+                string extension = ".jpg";
+                if (model.ImageFile != null)
+                {
+                    (imageId, extension) = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
+                }
 
                 Product product = await _context.Products.FindAsync(model.ProductId);
                 ProductImage productImage = new()
                 {
                     Product = product,
                     ImageId = imageId,
+                    Extension = extension,
                 };
 
                 try
@@ -257,7 +260,7 @@ namespace Shopping.Controllers
                 return NotFound();
             }
 
-            //await _blobHelper.DeleteBlobAsync(productImage.ImageId, "products");
+            _imageHelper.DeleteImage(productImage.ImageId, productImage.Extension, "products");
             _context.ProductImages.Remove(productImage);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { Id = productImage.Product.Id });
@@ -360,10 +363,10 @@ namespace Shopping.Controllers
                 .Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            //foreach (ProductImage productImage in product.ProductImages)
-            //{
-            //    await _blobHelper.DeleteBlobAsync(productImage.ImageId, "products");
-            //}
+            foreach (ProductImage productImage in product.ProductImages)
+            {
+                _imageHelper.DeleteImage(productImage.ImageId, productImage.Extension, "products");
+            }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();

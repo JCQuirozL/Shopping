@@ -1,4 +1,5 @@
-﻿using Shopping.Data.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Shopping.Data.Entities;
 using Shopping.Enums;
 using Shopping.Helpers;
 
@@ -20,8 +21,10 @@ namespace Shopping.Data
             await _context.Database.EnsureCreatedAsync();
             await CheckCountriesAsync();
             await CheckCategoriesAsync();
+            await CheckProductsAsync();
             await CheckRolesAsync();
             await CheckUserAsync("1010", "Jorge", "Carrillo", "jcq@yopmail.com", "123 456 7890", "Calle Luna Calle Sol", UserType.Admin);
+            await CheckExchangeRatesAsync();
 
         }
 
@@ -163,6 +166,102 @@ namespace Shopping.Data
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private async Task CheckProductsAsync()
+        {
+            if (_context.Products.Any())
+            {
+                return;
+            }
+
+            Dictionary<string, (string Description, decimal Price, float Stock)[]> productsByCategory = new()
+            {
+                ["Tecnología"] = new[]
+                {
+                    ("Laptop Ultradelgada 14\" 16GB RAM / 512GB SSD", 15999.00m, 12f),
+                    ("Smartphone Pro 128GB cámara triple 108MP", 11499.00m, 25f),
+                    ("Audífonos Inalámbricos con Cancelación de Ruido", 1899.00m, 40f),
+                    ("Smartwatch Serie 5 GPS y monitor cardíaco", 2599.00m, 30f),
+                    ("Tablet 10.5\" 64GB Wi-Fi", 4299.00m, 18f),
+                },
+                ["Ropa"] = new[]
+                {
+                    ("Chaqueta de Mezclilla Clásica Unisex", 899.00m, 50f),
+                    ("Camiseta Básica 100% Algodón", 249.00m, 120f),
+                    ("Vestido Casual Estampado Floral", 599.00m, 35f),
+                    ("Pantalón Chino Slim Fit", 679.00m, 60f),
+                    ("Sudadera con Capucha Oversize", 749.00m, 45f),
+                },
+                ["Gamer"] = new[]
+                {
+                    ("Consola de Videojuegos 1TB Edición Estándar", 9999.00m, 10f),
+                    ("Silla Gamer Ergonómica Reclinable", 3499.00m, 15f),
+                    ("Teclado Mecánico RGB Switch Rojo", 1299.00m, 28f),
+                    ("Mouse Gamer Inalámbrico 16000 DPI", 899.00m, 32f),
+                    ("Audífonos Gamer Surround 7.1", 1099.00m, 22f),
+                },
+                ["Belleza"] = new[]
+                {
+                    ("Set de Maquillaje Profesional 12 Piezas", 1299.00m, 20f),
+                    ("Crema Hidratante Facial con Ácido Hialurónico", 399.00m, 55f),
+                    ("Perfume Floral 100ml", 899.00m, 30f),
+                    ("Secadora de Cabello Iónica Profesional", 749.00m, 24f),
+                    ("Paleta de Sombras Tonos Tierra", 459.00m, 38f),
+                },
+                ["Nutrición"] = new[]
+                {
+                    ("Proteína Whey Sabor Vainilla 2kg", 1199.00m, 26f),
+                    ("Multivitamínico Diario 90 Cápsulas", 349.00m, 60f),
+                    ("Batido Sustituto de Comida Chocolate 1kg", 699.00m, 34f),
+                    ("Barra Energética Caja x12", 299.00m, 80f),
+                    ("Colágeno Hidrolizado en Polvo 300g", 549.00m, 40f),
+                },
+            };
+
+            foreach (KeyValuePair<string, (string Description, decimal Price, float Stock)[]> entry in productsByCategory)
+            {
+                Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == entry.Key);
+
+                if (category == null)
+                {
+                    continue;
+                }
+
+                foreach ((string Description, decimal Price, float Stock) item in entry.Value)
+                {
+                    Product product = new()
+                    {
+                        Name = item.Description,
+                        Description = $"{item.Description}. Producto de la categoría {category.Name}, disponible para entrega inmediata.",
+                        Price = item.Price,
+                        Stock = item.Stock,
+                        ProductCategories = new List<ProductCategory>
+                        {
+                            new ProductCategory { Category = category },
+                        },
+                        ProductImages = new List<ProductImage>
+                        {
+                            new ProductImage { ImageId = Guid.Empty },
+                        },
+                    };
+
+                    _context.Products.Add(product);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task CheckExchangeRatesAsync()
+        {
+            if (!_context.ExchangeRates.Any())
+            {
+                _context.ExchangeRates.Add(new ExchangeRate { CurrencyCode = "MXN", Rate = 1m, LastUpdated = DateTime.UtcNow });
+                _context.ExchangeRates.Add(new ExchangeRate { CurrencyCode = "USD", Rate = 0.059m, LastUpdated = DateTime.UtcNow });
+                _context.ExchangeRates.Add(new ExchangeRate { CurrencyCode = "BRL", Rate = 0.30m, LastUpdated = DateTime.UtcNow });
+                await _context.SaveChangesAsync();
+            }
         }
 
     }

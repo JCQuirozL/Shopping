@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavHome" xml:space="preserve"><value>Inicio</value></data>
+  <data name="NavDashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="NavUsers" xml:space="preserve"><value>Usuarios</value></data>
+  <data name="NavGeography" xml:space="preserve"><value>Geografía</value></data>
+  <data name="NavCategories" xml:space="preserve"><value>Categorías</value></data>
+  <data name="NavProducts" xml:space="preserve"><value>Productos</value></data>
+  <data name="NavInventory" xml:space="preserve"><value>Inventario</value></data>
+  <data name="NavCustomers" xml:space="preserve"><value>Clientes</value></data>
+  <data name="NavOrders" xml:space="preserve"><value>Pedidos</value></data>
+  <data name="NavPrivacy" xml:space="preserve"><value>Políticas</value></data>
+  <data name="NavMyOrders" xml:space="preserve"><value>Mis Pedidos</value></data>
+  <data name="NavMyAddresses" xml:space="preserve"><value>Mis Direcciones</value></data>
+  <data name="MyAccount" xml:space="preserve"><value>Mi Cuenta</value></data>
+  <data name="Logout" xml:space="preserve"><value>Cerrar Sesión</value></data>
+  <data name="Login" xml:space="preserve"><value>Iniciar Sesión</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Buscar productos...</value></data>
+  <data name="Language" xml:space="preserve"><value>Idioma</value></data>
+  <data name="Currency" xml:space="preserve"><value>Moneda</value></data>
+  <data name="Footer" xml:space="preserve"><value>Shopping - Todos los derechos reservados</value></data>
+  <data name="DashboardTitle" xml:space="preserve"><value>Dashboard Administrativo</value></data>
+  <data name="TotalOrders" xml:space="preserve"><value>Pedidos</value></data>
+  <data name="TotalRevenue" xml:space="preserve"><value>Ingresos</value></data>
+  <data name="TotalCustomers" xml:space="preserve"><value>Clientes</value></data>
+  <data name="TotalProducts" xml:space="preserve"><value>Productos</value></data>
+  <data name="LowStock" xml:space="preserve"><value>Bajo Stock</value></data>
+  <data name="SalesLast30Days" xml:space="preserve"><value>Ventas (últimos 30 días)</value></data>
+  <data name="OrdersByStatus" xml:space="preserve"><value>Pedidos por Estado</value></data>
+  <data name="TopProducts" xml:space="preserve"><value>Productos más Vendidos</value></data>
+  <data name="RecentOrders" xml:space="preserve"><value>Pedidos Recientes</value></data>
+  <data name="LowStockProducts" xml:space="preserve"><value>Productos con Bajo Stock</value></data>
+  <data name="Status_Pendiente" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="Status_Confirmado" xml:space="preserve"><value>Confirmado</value></data>
+  <data name="Status_EnPreparacion" xml:space="preserve"><value>En Preparación</value></data>
+  <data name="Status_Despachado" xml:space="preserve"><value>Despachado</value></data>
+  <data name="Status_EnCamino" xml:space="preserve"><value>En Camino</value></data>
+  <data name="Status_Entregado" xml:space="preserve"><value>Entregado</value></data>
+  <data name="Status_Cancelado" xml:space="preserve"><value>Cancelado</value></data>
+</root>

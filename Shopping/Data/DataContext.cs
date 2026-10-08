@@ -23,6 +23,10 @@ namespace Shopping.Data
 
         public DbSet<TemporalSale> TemporalSales { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<ExchangeRate> ExchangeRates { get; set; }
+        public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
+        public DbSet<InventoryMovement> InventoryMovements { get; set; }
 
 
 
@@ -35,6 +39,7 @@ namespace Shopping.Data
             modelBuilder.Entity<City>().HasIndex("Name", "StateId").IsUnique();
             modelBuilder.Entity<Product>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<ProductCategory>().HasIndex("ProductId", "CategoryId").IsUnique();
+            modelBuilder.Entity<ExchangeRate>().HasIndex(e => e.CurrencyCode).IsUnique();
 
         }
     }

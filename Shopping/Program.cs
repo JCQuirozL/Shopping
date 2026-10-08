@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
 using Shopping.Helpers;
+using System.Globalization;
 using Vereyon.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ITranslator, Translator>();
 builder.Services.AddDbContext<DataContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("ShoppingConnection"));
@@ -25,12 +28,16 @@ builder.Services.AddTransient<SeedDb>();
 builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddScoped<ISelectListHelper, SelectListHelper>();
 //builder.Services.AddScoped<IBlobHelper, BlobHelper>();
+builder.Services.AddScoped<IImageHelper, ImageHelper>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddScoped<ISelectListHelper, SelectListHelper>();
 builder.Services.AddScoped<IMailHelper, MailHelper>();
 //builder.Services.AddScoped<IFlashMessage, FlashMessage>();
 
 builder.Services.AddFlashMessage();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<ICurrencyHelper, CurrencyHelper>();
 
 
 
@@ -52,11 +59,42 @@ builder.Services.AddIdentity<User, IdentityRole>(cfg =>
 
 builder.Services.AddScoped<IOrdersHelper, OrdersHelper>();
 
+string googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+string googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+string facebookAppId = builder.Configuration["Authentication:Facebook:AppId"];
+string facebookAppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+
+bool googleConfigured = !string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret);
+bool facebookConfigured = !string.IsNullOrWhiteSpace(facebookAppId) && !string.IsNullOrWhiteSpace(facebookAppSecret);
+
+if (googleConfigured || facebookConfigured)
+{
+    Microsoft.AspNetCore.Authentication.AuthenticationBuilder authBuilder = builder.Services.AddAuthentication();
+
+    if (googleConfigured)
+    {
+        authBuilder.AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+        });
+    }
+
+    if (facebookConfigured)
+    {
+        authBuilder.AddFacebook(options =>
+        {
+            options.AppId = facebookAppId;
+            options.AppSecret = facebookAppSecret;
+        });
+    }
+}
+
 var app = builder.Build();
 
 SeedData(app);
 
-//Médtod para hacer la inyección del SeedDB enla clase program.cs
+//Mï¿½dtod para hacer la inyecciï¿½n del SeedDB enla clase program.cs
 
 void SeedData(WebApplication app)
 {
@@ -78,6 +116,21 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+List<CultureInfo> supportedCultures = new()
+{
+    new CultureInfo("es-MX"),
+    new CultureInfo("en-US"),
+    new CultureInfo("pt-BR"),
+};
+
+RequestLocalizationOptions localizationOptions = new()
+{
+    DefaultRequestCulture = new RequestCulture("es-MX"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures,
+};
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

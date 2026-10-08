@@ -1,0 +1,65 @@
+@model Shopping.Data.Entities.Sale
+@inject Shopping.Helpers.ITranslator Localizer
+@{
+    ViewData["Title"] = "Rastrear Pedido";
+    var steps = new[] {
+        Shopping.Enums.OrderStatus.Pendiente,
+        Shopping.Enums.OrderStatus.Confirmado,
+        Shopping.Enums.OrderStatus.EnPreparacion,
+        Shopping.Enums.OrderStatus.Despachado,
+        Shopping.Enums.OrderStatus.EnCamino,
+        Shopping.Enums.OrderStatus.Entregado
+    };
+    int currentIndex = Array.IndexOf(steps, Model.OrderStatus);
+}
+
+<h1 class="mb-4">Rastreo del Pedido #@Model.Id</h1>
+
+@if (Model.OrderStatus == Shopping.Enums.OrderStatus.Cancelado)
+{
+    <div class="alert alert-danger">Este pedido fue cancelado.</div>
+}
+else
+{
+    <div class="d-flex justify-content-between mb-4 flex-wrap">
+        @for (int i = 0; i < steps.Length; i++)
+        {
+            <div class="text-center flex-fill">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center @(i <= currentIndex ? "bg-success text-white" : "bg-light text-muted") " style="width:40px;height:40px;">
+                    <i class="fa-solid @(i <= currentIndex ? "fa-check" : "fa-circle")"></i>
+                </div>
+                <div class="small mt-1">@Localizer[$"Status_{steps[i]}"]</div>
+            </div>
+        }
+    </div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="panel panel-default p-3">
+            <p><strong>Transportadora:</strong> @Model.Carrier</p>
+            <p><strong>Número de guía:</strong> @Model.TrackingNumber</p>
+            <p><strong>Entrega estimada:</strong> @(Model.EstimatedDeliveryDate?.ToString("dd/MM/yyyy") ?? "N/A")</p>
+            <p><strong>Dirección de envío:</strong> @Model.ShippingAddress</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default p-3">
+            <h6>Historial</h6>
+            <ul class="list-group">
+                @foreach (var history in Model.StatusHistories)
+                {
+                    <li class="list-group-item">
+                        <strong>@Localizer[$"Status_{history.OrderStatus}"]</strong> - @history.Date.ToString("dd/MM/yyyy HH:mm")
+                        @if (!string.IsNullOrWhiteSpace(history.Notes))
+                        {
+                            <div class="text-muted">@history.Notes</div>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary">Volver</a>

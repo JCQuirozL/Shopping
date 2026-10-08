@@ -1,0 +1,39 @@
+@model Shopping.Models.InventoryAdjustmentViewModel
+@{
+    ViewData["Title"] = "Ajustar Inventario";
+}
+
+<h1 class="mb-4">Ajustar Inventario - @Model.ProductName</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="AdjustStock" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductId" />
+            <input type="hidden" asp-for="ProductName" />
+            <div class="form-group mb-2">
+                <label class="control-label">Existencia actual</label>
+                <input class="form-control" value="@Model.CurrentStock.ToString("N0")" disabled />
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="MovementType" class="control-label"></label>
+                <select asp-for="MovementType" class="form-select">
+                    <option value="Entrada">Entrada (suma)</option>
+                    <option value="Salida">Salida (resta)</option>
+                </select>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Reason" class="control-label"></label>
+                <input asp-for="Reason" class="form-control" placeholder="Ej. Reposición de proveedor, Merma, Ajuste de conteo..." />
+                <span asp-validation-for="Reason" class="text-danger"></span>
+            </div>
+            <input type="submit" value="Guardar" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>

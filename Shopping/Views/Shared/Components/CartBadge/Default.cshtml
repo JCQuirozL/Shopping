@@ -1,0 +1,9 @@
+@model float
+
+<a asp-controller="Home" asp-action="ShowCart" class="btn cart-btn ms-2">
+    <i class="fa-solid fa-cart-shopping"></i>
+    @if (Model > 0)
+    {
+        <span class="badge">@Model.ToString("N0")</span>
+    }
+</a>

@@ -1,0 +1,104 @@
+@model Shopping.Models.AddressViewModel
+@{
+    ViewData["Title"] = "Agregar Dirección";
+}
+
+<h1 class="mb-4">Agregar Dirección</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-2">
+                <label asp-for="Recipient" class="control-label"></label>
+                <input asp-for="Recipient" class="form-control" />
+                <span asp-validation-for="Recipient" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="Street" class="control-label"></label>
+                <input asp-for="Street" class="form-control" />
+                <span asp-validation-for="Street" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="Neighborhood" class="control-label"></label>
+                <input asp-for="Neighborhood" class="form-control" />
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="PostalCode" class="control-label"></label>
+                <input asp-for="PostalCode" class="form-control" />
+                <span asp-validation-for="PostalCode" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="CountryId" class="control-label"></label>
+                <select asp-for="CountryId" asp-items="Model.Countries" class="form-select" id="CountryId">
+                    <option value="">Seleccione un país</option>
+                </select>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="StateId" class="control-label"></label>
+                <select asp-for="StateId" asp-items="Model.States" class="form-select" id="StateId">
+                    <option value="">Seleccione un estado</option>
+                </select>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="CityId" class="control-label"></label>
+                <select asp-for="CityId" asp-items="Model.Cities" class="form-select" id="CityId">
+                    <option value="">Seleccione una ciudad</option>
+                </select>
+                <span asp-validation-for="CityId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="References" class="control-label"></label>
+                <input asp-for="References" class="form-control" />
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="IsDefault" class="form-check-input" />
+                <label asp-for="IsDefault" class="form-check-label"></label>
+            </div>
+            <input type="submit" value="Guardar" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $('#CountryId').change(function () {
+            $.ajax({
+                url: '/Addresses/GetStates/' + $(this).val(),
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var statesSelect = $('#StateId');
+                    statesSelect.empty();
+                    statesSelect.append('<option value="">Seleccione un estado</option>');
+                    $.each(data, function (i, state) {
+                        statesSelect.append('<option value="' + state.id + '">' + state.name + '</option>');
+                    });
+                }
+            });
+        });
+
+        $('#StateId').change(function () {
+            $.ajax({
+                url: '/Addresses/GetCities/' + $(this).val(),
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var citiesSelect = $('#CityId');
+                    citiesSelect.empty();
+                    citiesSelect.append('<option value="">Seleccione una ciudad</option>');
+                    $.each(data, function (i, city) {
+                        citiesSelect.append('<option value="' + city.id + '">' + city.name + '</option>');
+                    });
+                }
+            });
+        });
+    </script>
+}
