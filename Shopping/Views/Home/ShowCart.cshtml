@@ -26,7 +26,7 @@ else
             {
                 <div class="cart-item">
                     <a asp-action="Details" asp-route-id="@item.Product.Id" class="cart-item_media zoom">
-                        <img src="@item.Product.ImageFullPath" alt="@item.Product.Name" />
+                        <img src="@item.Product.ImageFullPath" alt="@item.Product.Name" onerror="this.onerror=null;this.src='@item.Product.ImageFallbackPath'" />
                     </a>
                     <div class="cart-item_body">
                         <a asp-action="Details" asp-route-id="@item.Product.Id" class="cart-item_title">@item.Product.Name</a>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Shopping.Helpers;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shopping.Data.Entities
@@ -40,8 +41,12 @@ namespace Shopping.Data.Entities
 
         [Display(Name = "Foto")]
         public string ImageFullPath => ProductImages == null || ProductImages.Count == 0
-            ? $"https://placehold.co/500x500/1f2a44/f7f5f2?font=poppins&text={Uri.EscapeDataString(Name ?? "Shopping")}"
+            ? ProductImageKeywordHelper.GetImageUrl(Name, Id)
             : ProductImages.FirstOrDefault().ImageFullPath;
+
+        [Display(Name = "Foto (respaldo)")]
+        public string ImageFallbackPath =>
+            $"https://placehold.co/500x500/1f2a44/f7f5f2?font=poppins&text={Uri.EscapeDataString(Name ?? "Shopping")}";
 
         public ICollection<SaleDetail> SaleDetails { get; set; }
 

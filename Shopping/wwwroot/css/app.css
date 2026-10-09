@@ -4,9 +4,9 @@
     --color-dark: #15233d;
     --color-dark-hover: #0d1829;
     --color-mid: #2f6fed;
-    --color-accent: #ff5a45;
-    --color-accent-hover: #e2432f;
-    --color-accent-light: #ffd9d1;
+    --color-accent: #ff8a00;
+    --color-accent-hover: #e67a00;
+    --color-accent-light: #ffe0b3;
     --color-bg-soft: #f4f6fb;
     --color-text: #1f2430;
     --font-heading: 'Poppins', sans-serif;
@@ -658,6 +658,10 @@ footer.footer {
     background: linear-gradient(135deg, var(--color-dark) 0%, #1c3561 100%) !important;
     padding-top: .6rem;
     padding-bottom: .6rem;
+}
+
+.page-content {
+    padding-top: 1.75rem;
 }
 
 .navbar-actions {

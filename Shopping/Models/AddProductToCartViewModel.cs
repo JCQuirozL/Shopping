@@ -33,5 +33,15 @@ namespace Shopping.Models
         [DataType(DataType.MultilineText)]
         [Display(Name = "Comentarios")]
         public string? Remarks { get; set; }
+
+        public bool HasImages => ProductImages != null && ProductImages.Count > 0;
+
+        [Display(Name = "Foto")]
+        public string ImageFullPath =>
+            Helpers.ProductImageKeywordHelper.GetImageUrl(Name, Id);
+
+        [Display(Name = "Foto (respaldo)")]
+        public string ImageFallbackPath =>
+            $"https://placehold.co/500x500/1f2a44/f7f5f2?font=poppins&text={Uri.EscapeDataString(Name ?? "Shopping")}";
     }
 }

@@ -11,16 +11,23 @@
     <div class="product-detail_gallery">
         <div id="ImagesCarousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
-                @{
-                    var first = true;
-                }
-                @foreach (var item in @Model?.ProductImages)
+                @if (!Model.HasImages)
                 {
-
-                    <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
-                        <img class="d-block w-100" src="@item.ImageFullPath" alt="@item.Id">
+                    <div class="carousel-item active">
+                        <img class="d-block w-100" src="@Model.ImageFullPath" alt="@Model.Name" onerror="this.onerror=null;this.src='@Model.ImageFallbackPath'">
                     </div>
-                    first = false;
+                }
+                else
+                {
+                    var first = true;
+                    @foreach (var item in @Model?.ProductImages)
+                    {
+
+                        <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
+                            <img class="d-block w-100" src="@item.ImageFullPath" alt="@item.Id">
+                        </div>
+                        first = false;
+                    }
                 }
             </div>
             <a id="ImagesCarouselPrev" class="carousel-control-prev" href="#ImagesCarousel" role="button"
@@ -76,8 +83,8 @@
                 <span asp-validation-for="Remarks" class="text-danger"></span>
             </div>
             <div class="form-group mt-3 buybox-actions">
-                <input type="submit" value="Agregar al Carro de Compras" class="btn btn-primary btn-lg" />
-                <a asp-action="Index" class="btn btn-outline-primary">Seguir Comprando</a>
+                <input type="submit" value="Agregar al Carro de Compras" class="btn btn-secondary btn-lg" />
+                <a asp-action="BuyNow" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg">Comprar Ahora</a>
             </div>
         </form>
     </div>

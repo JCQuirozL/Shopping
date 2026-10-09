@@ -40,7 +40,7 @@ else
             bool hasDiscount = Shopping.Helpers.DiscountHelper.HasDiscount(product.Id);
             <div class="product-card">
                 <a asp-action="Details" asp-route-id="@product.Id" class="product-card_media zoom">
-                    <img src="@product.ImageFullPath" alt="@product.Name" />
+                    <img src="@product.ImageFullPath" alt="@product.Name" onerror="this.onerror=null;this.src='@product.ImageFallbackPath'" />
                 </a>
                 @if (hasDiscount)
                 {

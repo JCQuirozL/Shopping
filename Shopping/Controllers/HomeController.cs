@@ -412,6 +412,42 @@ namespace Shopping.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> BuyNow(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            Product product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            TemporalSale temporalSale = new()
+            {
+                Product = product,
+                Quantity = 1,
+                User = user
+            };
+
+            _context.TemporalSales.Add(temporalSale);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(ShowCart));
+        }
+
 
         public async Task<IActionResult> Index(string search, int? categoryId, bool onSale = false)
         {

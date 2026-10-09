@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Shopping.Helpers;
 
 namespace Shopping.Data.Entities
 {
@@ -15,7 +16,7 @@ namespace Shopping.Data.Entities
 
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://placehold.co/500x500/1f2a44/f7f5f2?font=poppins&text={Uri.EscapeDataString(Product?.Name ?? "Shopping")}"
+            ? ProductImageKeywordHelper.GetImageUrl(Product?.Name, Product?.Id ?? 0)
             : $"/images/products/{ImageId}{Extension}";
 
     }

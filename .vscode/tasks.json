@@ -17,6 +17,13 @@
 			"command": "dotnet ef migrations add AddAdminFeatures --project Shopping/Shopping.csproj --startup-project Shopping/Shopping.csproj",
 			"isBackground": false,
 			"group": "build"
+		},
+		{
+			"label": "download-product-images",
+			"type": "shell",
+			"command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$dest = 'Shopping/wwwroot/images/products'; New-Item -ItemType Directory -Force -Path $dest | Out-Null; $items = @(\n @{g='11111111-1111-1111-1111-111111111101'; k='laptop,computer'},\n @{g='11111111-1111-1111-1111-111111111102'; k='smartphone,mobile'},\n @{g='11111111-1111-1111-1111-111111111103'; k='headphones'},\n @{g='11111111-1111-1111-1111-111111111104'; k='smartwatch'},\n @{g='11111111-1111-1111-1111-111111111105'; k='tablet,ipad'},\n @{g='22222222-2222-2222-2222-222222222201'; k='jacket,denim'},\n @{g='22222222-2222-2222-2222-222222222202'; k='tshirt,clothing'},\n @{g='22222222-2222-2222-2222-222222222203'; k='dress,floral'},\n @{g='22222222-2222-2222-2222-222222222204'; k='pants,chinos'},\n @{g='22222222-2222-2222-2222-222222222205'; k='hoodie,sweatshirt'},\n @{g='33333333-3333-3333-3333-333333333301'; k='gameconsole,videogame'},\n @{g='33333333-3333-3333-3333-333333333302'; k='gamingchair'},\n @{g='33333333-3333-3333-3333-333333333303'; k='keyboard,mechanical'},\n @{g='33333333-3333-3333-3333-333333333304'; k='mouse,gaming'},\n @{g='33333333-3333-3333-3333-333333333305'; k='headset,gaming'},\n @{g='44444444-4444-4444-4444-444444444401'; k='makeup,cosmetics'},\n @{g='44444444-4444-4444-4444-444444444402'; k='cream,skincare'},\n @{g='44444444-4444-4444-4444-444444444403'; k='perfume,bottle'},\n @{g='44444444-4444-4444-4444-444444444404'; k='hairdryer'},\n @{g='44444444-4444-4444-4444-444444444405'; k='eyeshadow,makeup'},\n @{g='55555555-5555-5555-5555-555555555501'; k='proteinpowder,supplement'},\n @{g='55555555-5555-5555-5555-555555555502'; k='vitamins,pills'},\n @{g='55555555-5555-5555-5555-555555555503'; k='proteinshake,chocolate'},\n @{g='55555555-5555-5555-5555-555555555504'; k='energybar,snack'},\n @{g='55555555-5555-5555-5555-555555555505'; k='collagen,powder'}\n ); foreach ($item in $items) { $url = 'https://loremflickr.com/500/500/' + $item.k; $out = Join-Path $dest ($item.g + '.jpg'); try { Invoke-WebRequest -Uri $url -OutFile $out -UseBasicParsing -TimeoutSec 25; Write-Host ('OK: ' + $item.g) } catch { Write-Host ('FAIL: ' + $item.g + ' -> ' + $_.Exception.Message) } }\"",
+			"isBackground": false,
+			"group": "build"
 		}
 	]
 }
