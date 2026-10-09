@@ -1,13 +1,14 @@
 @model Shopping.Models.PaymentViewModel
+@inject Shopping.Helpers.ITranslator Localizer
 @{
     ViewData["Title"] = "Payment";
 }
 
 <nav class="breadcrumb-bar">
-    <a asp-action="Index">Inicio</a> <span>/</span> <a asp-action="ShowCart">Carro de Compras</a> <span>/</span> <span class="text-navy">Pago</span>
+    <a asp-action="Index">@Localizer["NavHome"]</a> <span>/</span> <a asp-action="ShowCart">@Localizer["CartTitle"]</a> <span>/</span> <span class="text-navy">@Localizer["PaymentBreadcrumb"]</span>
 </nav>
 
-<h1 class="mb-4">Elige cómo pagar</h1>
+<h1 class="mb-4">@Localizer["ChoosePaymentTitle"]</h1>
 
 <div class="payment-layout">
     <form asp-action="Payment" method="post" id="paymentForm">
@@ -32,11 +33,11 @@
         <div class="payment-methods">
             <label class="payment-method">
                 <input type="radio" name="PaymentMethod" value="CreditCard" checked />
-                <span><i class="fa-solid fa-credit-card"></i> Tarjeta de Crédito</span>
+                <span><i class="fa-solid fa-credit-card"></i> @Localizer["CreditCardOption"]</span>
             </label>
             <label class="payment-method">
                 <input type="radio" name="PaymentMethod" value="DebitCard" />
-                <span><i class="fa-solid fa-credit-card"></i> Tarjeta de Débito</span>
+                <span><i class="fa-solid fa-credit-card"></i> @Localizer["DebitCardOption"]</span>
             </label>
             <label class="payment-method">
                 <input type="radio" name="PaymentMethod" value="PayPal" />
@@ -44,21 +45,21 @@
             </label>
             <label class="payment-method">
                 <input type="radio" name="PaymentMethod" value="Cash" />
-                <span><i class="fa-solid fa-money-bill-wave"></i> Contra Entrega</span>
+                <span><i class="fa-solid fa-money-bill-wave"></i> @Localizer["CashOnDeliveryOption"]</span>
             </label>
         </div>
 
         <div id="cardFields" class="card-fields">
             <div class="form-group">
                 <label asp-for="CardHolder" class="control-label"></label>
-                <input asp-for="CardHolder" class="form-control" placeholder="Como aparece en la tarjeta" />
+                <input asp-for="CardHolder" class="form-control" placeholder="@Localizer["CardHolderPlaceholder"]" />
                 <span asp-validation-for="CardHolder" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CardNumber" class="control-label"></label>
                 <input asp-for="CardNumber" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" />
                 <span asp-validation-for="CardNumber" class="text-danger"></span>
-                <small class="form-text text-muted">Simulación: cualquier número funciona. Termina en "0000" para simular un rechazo.</small>
+                <small class="form-text text-muted">@Localizer["CardSimulationNote"]</small>
             </div>
             <div class="row">
                 <div class="col-6">
@@ -80,28 +81,28 @@
 
         <div id="paypalFields" class="payment-note d-none">
             <i class="fa-brands fa-paypal text-accent icon-lg"></i>
-            <p>Serás redirigido (simulación) a PayPal para confirmar el pago de forma segura.</p>
+            <p>@Localizer["PaypalRedirectNote"]</p>
         </div>
 
         <div id="cashFields" class="payment-note d-none">
             <i class="fa-solid fa-truck text-accent icon-lg"></i>
-            <p>Pagarás en efectivo cuando recibas tu pedido. No se requiere información adicional.</p>
+            <p>@Localizer["CashDeliveryNote"]</p>
         </div>
 
-        <input type="submit" value="Pagar Ahora" class="btn btn-primary btn-lg w-100 mt-3" />
+        <input type="submit" value="@Localizer["PayNowButton"]" class="btn btn-primary btn-lg w-100 mt-3" />
     </form>
 
     <div class="cart-summary">
-        <h5>Resumen de pago</h5>
+        <h5>@Localizer["PaymentSummary"]</h5>
         <div class="cart-summary_row">
-            <span>Artículos</span>
+            <span>@Localizer["ItemsLabel"]</span>
             <strong>@Model.Items.ToString("N0")</strong>
         </div>
         <div class="cart-summary_row cart-summary_total">
-            <span>Total a pagar</span>
+            <span>@Localizer["TotalToPay"]</span>
             <strong>@await Component.InvokeAsync("Currency", new { amount = Model.Total })</strong>
         </div>
-        <p class="payment-security"><i class="fa-solid fa-lock"></i> Pago simulado, no se realiza ningún cargo real.</p>
+        <p class="payment-security"><i class="fa-solid fa-lock"></i> @Localizer["SimulatedPaymentNote"]</p>
     </div>
 </div>
 

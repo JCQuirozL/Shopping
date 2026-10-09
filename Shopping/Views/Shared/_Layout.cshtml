@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="~/css/app.css" />
 </head>
 <body>
-    <header >
+    <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-brand sticky-top">
             <div class="container-xl flex-wrap">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-bag-shopping icon-lg"></i> Shopping</a>
@@ -45,17 +45,17 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="regionDropdown">
                             <li><h6 class="dropdown-header">@Localizer["Region"]</h6></li>
                             <li>
-                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="MX" asp-route-returnUrl="@Context.Request.Path+Context.Request.QueryString">
+                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="MX" asp-route-returnUrl="@Context.Request.Path">
                                     🇲🇽 México <span class="text-muted small">(MXN · Español)</span>
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="BR" asp-route-returnUrl="@Context.Request.Path+Context.Request.QueryString">
+                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="BR" asp-route-returnUrl="@Context.Request.Path">
                                     🇧🇷 Brasil <span class="text-muted small">(BRL · Português)</span>
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="US" asp-route-returnUrl="@Context.Request.Path+Context.Request.QueryString">
+                                <a class="dropdown-item" asp-controller="Currency" asp-action="SetRegion" asp-route-region="US" asp-route-returnUrl="@Context.Request.Path">
                                     🇺🇸 United States <span class="text-muted small">(USD · English)</span>
                                 </a>
                             </li>

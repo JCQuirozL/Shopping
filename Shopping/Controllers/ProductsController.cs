@@ -373,6 +373,92 @@ namespace Shopping.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Products/Translations/5
+        public async Task<IActionResult> Translations(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Product product = await _context.Products
+                .Include(p => p.Translations)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            ProductTranslationsViewModel model = new()
+            {
+                ProductId = product.Id,
+                ProductName = product.Name,
+                NameEn = product.Translations?.FirstOrDefault(t => t.LanguageCode == "en")?.Name,
+                DescriptionEn = product.Translations?.FirstOrDefault(t => t.LanguageCode == "en")?.Description,
+                NamePt = product.Translations?.FirstOrDefault(t => t.LanguageCode == "pt")?.Name,
+                DescriptionPt = product.Translations?.FirstOrDefault(t => t.LanguageCode == "pt")?.Description,
+            };
+
+            return View(model);
+        }
+
+        // POST: Products/Translations/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Translations(ProductTranslationsViewModel model)
+        {
+            Product product = await _context.Products
+                .Include(p => p.Translations)
+                .FirstOrDefaultAsync(p => p.Id == model.ProductId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.ProductName = product.Name;
+                return View(model);
+            }
+
+            UpsertTranslation(product, "en", model.NameEn, model.DescriptionEn);
+            UpsertTranslation(product, "pt", model.NamePt, model.DescriptionPt);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = product.Id });
+        }
+
+        private void UpsertTranslation(Product product, string languageCode, string name, string description)
+        {
+            ProductTranslation existing = product.Translations?.FirstOrDefault(t => t.LanguageCode == languageCode);
+
+            if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(description))
+            {
+                if (existing != null)
+                {
+                    _context.ProductTranslations.Remove(existing);
+                }
+                return;
+            }
+
+            if (existing != null)
+            {
+                existing.Name = name ?? string.Empty;
+                existing.Description = description ?? string.Empty;
+                _context.ProductTranslations.Update(existing);
+            }
+            else
+            {
+                _context.ProductTranslations.Add(new ProductTranslation
+                {
+                    Product = product,
+                    LanguageCode = languageCode,
+                    Name = name ?? string.Empty,
+                    Description = description ?? string.Empty,
+                });
+            }
+        }
+
     }
 
 }

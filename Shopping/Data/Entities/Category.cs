@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace Shopping.Data.Entities
 {
@@ -12,5 +14,20 @@ namespace Shopping.Data.Entities
         public String Name { get; set; }
 
         public ICollection<ProductCategory> ProductCategories { get; set; }
+
+        [JsonIgnore]
+        public ICollection<CategoryTranslation> Translations { get; set; }
+
+        /// <summary>
+        /// Returns the category name translated to the current UI culture if
+        /// a translation exists in <see cref="Translations"/>; otherwise
+        /// falls back to the base (Spanish) <see cref="Name"/>.
+        /// </summary>
+        public string GetLocalizedName()
+        {
+            string languageCode = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            CategoryTranslation translation = Translations?.FirstOrDefault(t => t.LanguageCode == languageCode);
+            return !string.IsNullOrWhiteSpace(translation?.Name) ? translation.Name : Name;
+        }
     }
 }

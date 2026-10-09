@@ -1,34 +1,35 @@
-﻿@{
+﻿@inject Shopping.Helpers.ITranslator Localizer
+@{
 
     ViewData["Title"] = "Order Success";
 }
 <div class="empty-state">
     <i class="fa-solid fa-circle-check icon-lg text-accent"></i>
-    <h2>¡Gracias por tu compra!</h2>
-    <h5 class="text-muted">Tu pedido fue registrado en nuestro sistema, pronto uno de nuestros asesores se comunicará contigo.</h5>
+    <h2>@Localizer["ThankYouTitle"]</h2>
+    <h5 class="text-muted">@Localizer["OrderRegisteredNote"]</h5>
 
     @if (ViewBag.PaymentMethod != null)
     {
         <div class="cart-summary mx-auto mt-4" style="max-width: 360px; text-align: left;">
             <div class="cart-summary_row">
-                <span>Método de pago</span>
+                <span>@Localizer["PaymentMethodLabel"]</span>
                 <strong>
                     @(ViewBag.PaymentMethod switch
                     {
-                        "CreditCard" => "Tarjeta de Crédito",
-                        "DebitCard" => "Tarjeta de Débito",
+                        "CreditCard" => Localizer["CreditCardOption"],
+                        "DebitCard" => Localizer["DebitCardOption"],
                         "PayPal" => "PayPal",
-                        "Cash" => "Contra Entrega",
+                        "Cash" => Localizer["CashOnDeliveryOption"],
                         _ => ViewBag.PaymentMethod
                     })
                 </strong>
             </div>
             <div class="cart-summary_row cart-summary_total">
-                <span>Total pagado</span>
+                <span>@Localizer["TotalPaidLabel"]</span>
                 <strong>@ViewBag.PaymentTotal</strong>
             </div>
         </div>
     }
 
-    <a asp-action="Index" class="btn btn-primary mt-4">Seguir Comprando</a>
+    <a asp-action="Index" class="btn btn-primary mt-4">@Localizer["ContinueShoppingButton"]</a>
 </div>

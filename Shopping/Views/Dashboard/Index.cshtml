@@ -109,9 +109,29 @@
             type: 'line',
             data: {
                 labels: salesDays,
-                datasets: [{ label: 'Ventas', data: salesAmounts, borderColor: '#1f2a44', backgroundColor: 'rgba(31,42,68,.15)', tension: .3, fill: true }]
+                datasets: [{ label: 'Ingresos (MXN)', data: salesAmounts, borderColor: '#1f2a44', backgroundColor: 'rgba(31,42,68,.15)', tension: .3, fill: true }]
             },
-            options: { plugins: { legend: { display: false } } }
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return 'Ingresos: $' + context.parsed.y.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function (value) {
+                                return '$' + value.toLocaleString('es-MX');
+                            }
+                        }
+                    }
+                }
+            }
         });
 
         new Chart(document.getElementById('statusChart'), {

@@ -158,5 +158,87 @@ namespace Shopping.Controllers
         {
             return (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        // GET: Categories/Translations/5
+        public async Task<IActionResult> Translations(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Category category = await _context.Categories
+                .Include(c => c.Translations)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            Models.CategoryTranslationsViewModel model = new()
+            {
+                CategoryId = category.Id,
+                CategoryName = category.Name,
+                NameEn = category.Translations?.FirstOrDefault(t => t.LanguageCode == "en")?.Name,
+                NamePt = category.Translations?.FirstOrDefault(t => t.LanguageCode == "pt")?.Name,
+            };
+
+            return View(model);
+        }
+
+        // POST: Categories/Translations/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Translations(Models.CategoryTranslationsViewModel model)
+        {
+            Category category = await _context.Categories
+                .Include(c => c.Translations)
+                .FirstOrDefaultAsync(c => c.Id == model.CategoryId);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.CategoryName = category.Name;
+                return View(model);
+            }
+
+            UpsertTranslation(category.Translations, "en", model.NameEn, category);
+            UpsertTranslation(category.Translations, "pt", model.NamePt, category);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private void UpsertTranslation(ICollection<CategoryTranslation> translations, string languageCode, string name, Category category)
+        {
+            CategoryTranslation existing = translations?.FirstOrDefault(t => t.LanguageCode == languageCode);
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                if (existing != null)
+                {
+                    _context.CategoryTranslations.Remove(existing);
+                }
+                return;
+            }
+
+            if (existing != null)
+            {
+                existing.Name = name;
+                _context.CategoryTranslations.Update(existing);
+            }
+            else
+            {
+                _context.CategoryTranslations.Add(new CategoryTranslation
+                {
+                    Category = category,
+                    LanguageCode = languageCode,
+                    Name = name,
+                });
+            }
+        }
     }
 }

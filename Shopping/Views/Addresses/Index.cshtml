@@ -1,15 +1,16 @@
 @model IEnumerable<Shopping.Data.Entities.Address>
+@inject Shopping.Helpers.ITranslator Localizer
 @{
     ViewData["Title"] = "Mis Direcciones";
 }
 
-<h1 class="mb-4">Mis Direcciones</h1>
+<h1 class="mb-4">@Localizer["AddressesTitle"]</h1>
 
-<p><a asp-action="Create" class="btn btn-primary">Agregar Dirección</a></p>
+<p><a asp-action="Create" class="btn btn-primary">@Localizer["AddAddressButton"]</a></p>
 
 @if (!Model.Any())
 {
-    <p class="text-muted">Aún no tienes direcciones guardadas. Se usará la dirección de tu perfil al comprar.</p>
+    <p class="text-muted">@Localizer["NoAddressesNote"]</p>
 }
 else
 {
@@ -18,14 +19,14 @@ else
         {
             <div class="col-md-4">
                 <div class="panel panel-default p-3">
-                    <h6>@address.Recipient @(address.IsDefault ? "<span class='badge bg-success'>Predeterminada</span>" : "")</h6>
+                    <h6>@address.Recipient @(address.IsDefault ? Html.Raw($"<span class='badge bg-success'>{Localizer["DefaultBadge"]}</span>") : Html.Raw(""))</h6>
                     <p>@address.FullAddress</p>
                     <p>@address.PhoneNumber</p>
                     @if (!address.IsDefault)
                     {
-                        <a asp-action="SetDefault" asp-route-id="@address.Id" class="btn btn-sm btn-outline-primary">Predeterminar</a>
+                        <a asp-action="SetDefault" asp-route-id="@address.Id" class="btn btn-sm btn-outline-primary">@Localizer["SetDefaultButton"]</a>
                     }
-                    <a asp-action="Delete" asp-route-id="@address.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    <a asp-action="Delete" asp-route-id="@address.Id" class="btn btn-sm btn-outline-danger">@Localizer["DeleteAction"]</a>
                 </div>
             </div>
         }

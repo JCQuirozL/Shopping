@@ -1,0 +1,33 @@
+@model Shopping.Models.CategoryTranslationsViewModel
+@{
+    ViewData["Title"] = "Traducciones de Categoría";
+}
+
+<h1 class="mb-4">Traducciones - @Model.CategoryName</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Translations" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CategoryId" />
+            <input type="hidden" asp-for="CategoryName" />
+            <div class="form-group mb-3">
+                <label asp-for="NameEn" class="control-label"></label>
+                <input asp-for="NameEn" class="form-control" placeholder="@Model.CategoryName" />
+                <span asp-validation-for="NameEn" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="NamePt" class="control-label"></label>
+                <input asp-for="NamePt" class="form-control" placeholder="@Model.CategoryName" />
+                <span asp-validation-for="NamePt" class="text-danger"></span>
+            </div>
+            <small class="form-text text-muted mb-3 d-block">Deja un campo vacío para quitar su traducción (se mostrará el nombre en español como respaldo).</small>
+            <input type="submit" value="Guardar" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

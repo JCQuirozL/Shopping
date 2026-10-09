@@ -1,10 +1,11 @@
 ﻿@model Shopping.Models.AddProductToCartViewModel
+@inject Shopping.Helpers.ITranslator Localizer
 @{
     ViewData["Title"] = "Details";
 }
 
 <nav class="breadcrumb-bar">
-    <a asp-action="Index">Inicio</a> <span>/</span> <span>@Model?.Categories</span> <span>/</span> <span class="text-navy">@Model?.Name</span>
+    <a asp-action="Index">@Localizer["NavHome"]</a> <span>/</span> <span>@Model?.Categories</span> <span>/</span> <span class="text-navy">@Model?.Name</span>
 </nav>
 
 <div class="product-detail">
@@ -66,7 +67,7 @@
         <p class="buybox-description">@Model?.Description</p>
         <div class="buybox-stock">
             <i class="fa-solid fa-boxes-stacked text-accent"></i>
-            @Model?.Stock.ToString("N0") disponibles
+            @Model?.Stock.ToString("N0") @Localizer["AvailableUnits"]
         </div>
 
         <form asp-action="Details" class="buybox-form">
@@ -79,12 +80,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Remarks" class="control-label"></label>
-                <input asp-for="Remarks" class="form-control" placeholder="Opcional" />
+                <input asp-for="Remarks" class="form-control" placeholder="@Localizer["OptionalPlaceholder"]" />
                 <span asp-validation-for="Remarks" class="text-danger"></span>
             </div>
             <div class="form-group mt-3 buybox-actions">
-                <input type="submit" value="Agregar al Carro de Compras" class="btn btn-secondary btn-lg" />
-                <a asp-action="BuyNow" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg">Comprar Ahora</a>
+                <input type="submit" value="@Localizer["AddToCartButton"]" class="btn btn-secondary btn-lg" />
+                <a asp-action="BuyNow" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg">@Localizer["BuyNowButton"]</a>
             </div>
         </form>
     </div>

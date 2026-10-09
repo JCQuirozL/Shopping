@@ -27,6 +27,8 @@ namespace Shopping.Data
         public DbSet<ExchangeRate> ExchangeRates { get; set; }
         public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
         public DbSet<InventoryMovement> InventoryMovements { get; set; }
+        public DbSet<ProductTranslation> ProductTranslations { get; set; }
+        public DbSet<CategoryTranslation> CategoryTranslations { get; set; }
 
 
 
@@ -40,6 +42,8 @@ namespace Shopping.Data
             modelBuilder.Entity<Product>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<ProductCategory>().HasIndex("ProductId", "CategoryId").IsUnique();
             modelBuilder.Entity<ExchangeRate>().HasIndex(e => e.CurrencyCode).IsUnique();
+            modelBuilder.Entity<ProductTranslation>().HasIndex("ProductId", "LanguageCode").IsUnique();
+            modelBuilder.Entity<CategoryTranslation>().HasIndex("CategoryId", "LanguageCode").IsUnique();
 
         }
     }

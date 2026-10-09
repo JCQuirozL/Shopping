@@ -1,21 +1,22 @@
 ﻿@model Shopping.Models.ShowCartViewModel
+@inject Shopping.Helpers.ITranslator Localizer
 @{
     ViewData["Title"] = "Cart";
 }
 
 <nav class="breadcrumb-bar">
-    <a asp-action="Index">Inicio</a> <span>/</span> <span class="text-navy">Carro de Compras</span>
+    <a asp-action="Index">@Localizer["NavHome"]</a> <span>/</span> <span class="text-navy">@Localizer["CartTitle"]</span>
 </nav>
 
-<h1 class="mb-4">Carro de Compras</h1>
+<h1 class="mb-4">@Localizer["CartTitle"]</h1>
 
 @if (Model.TemporalSales == null || !Model.TemporalSales.Any())
 {
     <div class="empty-state">
         <i class="fa-solid fa-cart-shopping icon-lg text-accent"></i>
-        <h4>Tu carro está vacío</h4>
-        <p class="text-muted">Agrega productos para continuar con tu compra.</p>
-        <a asp-action="Index" class="btn btn-outline-primary">Ver productos</a>
+        <h4>@Localizer["EmptyCartTitle"]</h4>
+        <p class="text-muted">@Localizer["EmptyCartSubtitle"]</p>
+        <a asp-action="Index" class="btn btn-outline-primary">@Localizer["ViewProductsButton"]</a>
     </div>
 }
 else
@@ -26,10 +27,10 @@ else
             {
                 <div class="cart-item">
                     <a asp-action="Details" asp-route-id="@item.Product.Id" class="cart-item_media zoom">
-                        <img src="@item.Product.ImageFullPath" alt="@item.Product.Name" onerror="this.onerror=null;this.src='@item.Product.ImageFallbackPath'" />
+                        <img src="@item.Product.ImageFullPath" alt="@item.Product.GetLocalizedName()" onerror="this.onerror=null;this.src='@item.Product.ImageFallbackPath'" />
                     </a>
                     <div class="cart-item_body">
-                        <a asp-action="Details" asp-route-id="@item.Product.Id" class="cart-item_title">@item.Product.Name</a>
+                        <a asp-action="Details" asp-route-id="@item.Product.Id" class="cart-item_title">@item.Product.GetLocalizedName()</a>
                         @if (!string.IsNullOrWhiteSpace(item.Remarks))
                         {
                             <p class="cart-item_remarks">@item.Remarks</p>
@@ -43,15 +44,15 @@ else
                     </div>
                     <div class="cart-item_total">@await Component.InvokeAsync("Currency", new { amount = item.Value })</div>
                     <div class="cart-item_actions">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="icon-btn" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="icon-btn icon-btn-danger" title="Eliminar"><i class="fa-solid fa-trash"></i></a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="icon-btn" title="@Localizer["EditAction"]"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="icon-btn icon-btn-danger" title="@Localizer["DeleteAction"]"><i class="fa-solid fa-trash"></i></a>
                     </div>
                 </div>
             }
         </div>
 
         <div class="cart-summary">
-            <h5>Resumen del pedido</h5>
+            <h5>@Localizer["OrderSummary"]</h5>
             <div class="cart-summary_row">
                 <span>@Html.DisplayNameFor(model => model.Quantity)</span>
                 <strong>@Html.DisplayFor(model => model.Quantity)</strong>
@@ -75,9 +76,9 @@ else
                 @if (Model.SavedAddresses.Any())
                 {
                     <div class="form-group mt-2">
-                        <label>Dirección guardada</label>
+                        <label>@Localizer["SavedAddressLabel"]</label>
                         <select class="form-select" onchange="document.getElementById('ShippingAddress').value = this.value">
-                            <option value="">-- Escribir manualmente --</option>
+                            <option value="">@Localizer["WriteManually"]</option>
                             @foreach (var address in Model.SavedAddresses)
                             {
                                 <option value="@address.FullAddress" selected="@(address.FullAddress == Model.ShippingAddress)">@address.Recipient - @address.FullAddress</option>
@@ -91,8 +92,8 @@ else
                     <span asp-validation-for="ShippingAddress" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-3 d-grid gap-2">
-                    <input type="submit" value="Ir a Pagar" class="btn btn-primary btn-lg" />
-                    <a asp-action="Index" class="btn btn-outline-primary">Seguir Comprando</a>
+                    <input type="submit" value="@Localizer["GoToPayButton"]" class="btn btn-primary btn-lg" />
+                    <a asp-action="Index" class="btn btn-outline-primary">@Localizer["ContinueShoppingButton"]</a>
                 </div>
             </form>
         </div>

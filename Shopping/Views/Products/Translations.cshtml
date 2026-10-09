@@ -1,0 +1,48 @@
+@model Shopping.Models.ProductTranslationsViewModel
+@{
+    ViewData["Title"] = "Traducciones de Producto";
+}
+
+<h1 class="mb-4">Traducciones - @Model.ProductName</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Translations" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductId" />
+            <input type="hidden" asp-for="ProductName" />
+
+            <h5>English</h5>
+            <div class="form-group mb-2">
+                <label asp-for="NameEn" class="control-label"></label>
+                <input asp-for="NameEn" class="form-control" placeholder="@Model.ProductName" />
+                <span asp-validation-for="NameEn" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="DescriptionEn" class="control-label"></label>
+                <textarea asp-for="DescriptionEn" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="DescriptionEn" class="text-danger"></span>
+            </div>
+
+            <h5>Português</h5>
+            <div class="form-group mb-2">
+                <label asp-for="NamePt" class="control-label"></label>
+                <input asp-for="NamePt" class="form-control" placeholder="@Model.ProductName" />
+                <span asp-validation-for="NamePt" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="DescriptionPt" class="control-label"></label>
+                <textarea asp-for="DescriptionPt" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="DescriptionPt" class="text-danger"></span>
+            </div>
+
+            <small class="form-text text-muted mb-3 d-block">Deja ambos campos de un idioma vacíos para quitar su traducción (se mostrará el nombre/descripción en español como respaldo).</small>
+            <input type="submit" value="Guardar" class="btn btn-primary" />
+            <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

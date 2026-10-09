@@ -1,6 +1,8 @@
 ﻿using Shopping.Helpers;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace Shopping.Data.Entities
 {
@@ -49,6 +51,33 @@ namespace Shopping.Data.Entities
             $"https://placehold.co/500x500/1f2a44/f7f5f2?font=poppins&text={Uri.EscapeDataString(Name ?? "Shopping")}";
 
         public ICollection<SaleDetail> SaleDetails { get; set; }
+
+        [JsonIgnore]
+        public ICollection<ProductTranslation> Translations { get; set; }
+
+        /// <summary>
+        /// Returns the product name translated to the current UI culture if a
+        /// translation exists in <see cref="Translations"/>; otherwise falls
+        /// back to the base (Spanish) <see cref="Name"/>.
+        /// </summary>
+        public string GetLocalizedName()
+        {
+            string languageCode = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            ProductTranslation translation = Translations?.FirstOrDefault(t => t.LanguageCode == languageCode);
+            return !string.IsNullOrWhiteSpace(translation?.Name) ? translation.Name : Name;
+        }
+
+        /// <summary>
+        /// Returns the product description translated to the current UI
+        /// culture if a translation exists; otherwise falls back to the base
+        /// (Spanish) <see cref="Description"/>.
+        /// </summary>
+        public string GetLocalizedDescription()
+        {
+            string languageCode = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            ProductTranslation translation = Translations?.FirstOrDefault(t => t.LanguageCode == languageCode);
+            return !string.IsNullOrWhiteSpace(translation?.Description) ? translation.Description : Description;
+        }
 
     }
 }

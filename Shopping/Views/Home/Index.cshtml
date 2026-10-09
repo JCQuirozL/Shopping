@@ -1,4 +1,5 @@
 ﻿@model Shopping.Models.HomeViewModel
+@inject Shopping.Helpers.ITranslator Localizer
 
 @{
     ViewData["Title"] = "Index";
@@ -7,18 +8,18 @@
 <div class="shop-toolbar">
     <div class="category-pills">
         <a asp-action="Index" asp-route-search="@Model.Search"
-           class="pill @(Model.CategoryId == null ? "pill-active" : "")">Todas</a>
+           class="pill @(Model.CategoryId == null ? "pill-active" : "")">@Localizer["CategoryAll"]</a>
         @foreach (var category in Model.Categories)
         {
             <a asp-action="Index" asp-route-search="@Model.Search" asp-route-categoryId="@category.Id"
-               class="pill @(Model.CategoryId == category.Id ? "pill-active" : "")">@category.Name</a>
+               class="pill @(Model.CategoryId == category.Id ? "pill-active" : "")">@category.GetLocalizedName()</a>
         }
     </div>
 
     @if (Model.Quantity > 0)
     {
         <a asp-action="ShowCart" class="btn btn-primary cart-pill">
-            <i class="fa-solid fa-cart-shopping"></i> Carro (@Model.Quantity)
+            <i class="fa-solid fa-cart-shopping"></i> @Localizer["CartLabel"] (@Model.Quantity)
         </a>
     }
 </div>
@@ -27,9 +28,9 @@
 {
     <div class="empty-state">
         <i class="fa-solid fa-box-open icon-lg text-accent"></i>
-        <h4>No encontramos productos</h4>
-        <p class="text-muted">Prueba con otra búsqueda o quita los filtros aplicados.</p>
-        <a asp-action="Index" class="btn btn-outline-primary">Ver todos los productos</a>
+        <h4>@Localizer["NoProductsFound"]</h4>
+        <p class="text-muted">@Localizer["TryAnotherSearch"]</p>
+        <a asp-action="Index" class="btn btn-outline-primary">@Localizer["ViewAllProducts"]</a>
     </div>
 }
 else
@@ -47,8 +48,8 @@ else
                     <span class="discount-badge">-@Shopping.Helpers.DiscountHelper.GetDiscountPercentage(product.Id)%</span>
                 }
                 <div class="product-card_body">
-                    <a asp-action="Details" asp-route-id="@product.Id" class="product-card_title">@product.Name</a>
-                    <p class="product-card_description">@product.Description</p>
+                    <a asp-action="Details" asp-route-id="@product.Id" class="product-card_title">@product.GetLocalizedName()</a>
+                    <p class="product-card_description">@product.GetLocalizedDescription()</p>
                     @if (hasDiscount)
                     {
                         <div class="product-card_price-row">
@@ -62,8 +63,8 @@ else
                     }
                 </div>
                 <div class="product-card_foot">
-                    <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm">Detalles</a>
-                    <a asp-action="Add" asp-route-id="@product.Id" class="btn btn-primary btn-sm"><i class="fa-solid fa-cart-plus"></i> Agregar</a>
+                    <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm">@Localizer["DetailsButton"]</a>
+                    <a asp-action="Add" asp-route-id="@product.Id" class="btn btn-primary btn-sm"><i class="fa-solid fa-cart-plus"></i> @Localizer["AddButton"]</a>
                 </div>
             </div>
         }

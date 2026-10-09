@@ -283,6 +283,8 @@ namespace Shopping.Controllers
             List<TemporalSale>? temporalSales = await _context.TemporalSales
             .Include(ts => ts.Product)
             .ThenInclude(p => p.ProductImages)
+            .Include(ts => ts.Product)
+            .ThenInclude(p => p.Translations)
             .Where(ts => ts.User.Id == user.Id)
             .ToListAsync();
 
@@ -315,6 +317,8 @@ namespace Shopping.Controllers
             .Include(p => p.ProductImages)
             .Include(p => p.ProductCategories)
             .ThenInclude(pc => pc.Category)
+            .ThenInclude(c => c.Translations)
+            .Include(p => p.Translations)
             .FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)
             {
@@ -323,15 +327,15 @@ namespace Shopping.Controllers
             string categories = string.Empty;
             foreach (ProductCategory? category in product.ProductCategories)
             {
-                categories += $"{category.Category.Name}, ";
+                categories += $"{category.Category.GetLocalizedName()}, ";
             }
             categories = categories.Substring(0, categories.Length - 2);
             AddProductToCartViewModel model = new()
             {
                 Categories = categories,
-                Description = product.Description,
+                Description = product.GetLocalizedDescription(),
                 Id = product.Id,
-                Name = product.Name,
+                Name = product.GetLocalizedName(),
                 Price = product.Price,
                 ProductImages = product.ProductImages,
                 Quantity = 1,
@@ -455,6 +459,7 @@ namespace Shopping.Controllers
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Category)
+                .Include(p => p.Translations)
                 .Where(p => p.Stock > 0);
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -479,7 +484,7 @@ namespace Shopping.Controllers
             HomeViewModel model = new()
             {
                 Products = products,
-                Categories = await _context.Categories.OrderBy(c => c.Name).ToListAsync(),
+                Categories = await _context.Categories.Include(c => c.Translations).OrderBy(c => c.Name).ToListAsync(),
                 Search = search,
                 CategoryId = categoryId,
             };

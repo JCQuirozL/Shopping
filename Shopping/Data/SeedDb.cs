@@ -67,11 +67,27 @@ namespace Shopping.Data
         {
             if (!_context.Categories.Any())
             {
-                _context.Categories.Add(new Category { Name = "Tecnología" });
-                _context.Categories.Add(new Category { Name = "Ropa" });
-                _context.Categories.Add(new Category { Name = "Gamer" });
-                _context.Categories.Add(new Category { Name = "Belleza" });
-                _context.Categories.Add(new Category { Name = "Nutrición" });
+                Dictionary<string, (string En, string Pt)> categoryTranslations = new()
+                {
+                    ["Tecnología"] = ("Technology", "Tecnologia"),
+                    ["Ropa"] = ("Clothing", "Roupas"),
+                    ["Gamer"] = ("Gaming", "Gamer"),
+                    ["Belleza"] = ("Beauty", "Beleza"),
+                    ["Nutrición"] = ("Nutrition", "Nutrição"),
+                };
+
+                foreach (KeyValuePair<string, (string En, string Pt)> entry in categoryTranslations)
+                {
+                    _context.Categories.Add(new Category
+                    {
+                        Name = entry.Key,
+                        Translations = new List<CategoryTranslation>
+                        {
+                            new CategoryTranslation { LanguageCode = "en", Name = entry.Value.En },
+                            new CategoryTranslation { LanguageCode = "pt", Name = entry.Value.Pt },
+                        },
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -219,6 +235,44 @@ namespace Shopping.Data
                 },
             };
 
+            Dictionary<string, (string En, string Pt)> categoryTranslations = new()
+            {
+                ["Tecnología"] = ("Technology", "Tecnologia"),
+                ["Ropa"] = ("Clothing", "Roupas"),
+                ["Gamer"] = ("Gaming", "Gamer"),
+                ["Belleza"] = ("Beauty", "Beleza"),
+                ["Nutrición"] = ("Nutrition", "Nutrição"),
+            };
+
+            Dictionary<string, (string En, string Pt)> productNameTranslations = new()
+            {
+                ["Laptop Ultradelgada 14\" 16GB RAM / 512GB SSD"] = ("Ultra-thin Laptop 14\" 16GB RAM / 512GB SSD", "Laptop Ultrafino 14\" 16GB RAM / 512GB SSD"),
+                ["Smartphone Pro 128GB cámara triple 108MP"] = ("Smartphone Pro 128GB triple camera 108MP", "Smartphone Pro 128GB câmera tripla 108MP"),
+                ["Audífonos Inalámbricos con Cancelación de Ruido"] = ("Wireless Headphones with Noise Cancellation", "Fones de Ouvido Sem Fio com Cancelamento de Ruído"),
+                ["Smartwatch Serie 5 GPS y monitor cardíaco"] = ("Smartwatch Series 5 GPS and heart rate monitor", "Smartwatch Série 5 GPS e monitor cardíaco"),
+                ["Tablet 10.5\" 64GB Wi-Fi"] = ("Tablet 10.5\" 64GB Wi-Fi", "Tablet 10.5\" 64GB Wi-Fi"),
+                ["Chaqueta de Mezclilla Clásica Unisex"] = ("Classic Unisex Denim Jacket", "Jaqueta Jeans Clássica Unissex"),
+                ["Camiseta Básica 100% Algodón"] = ("Basic 100% Cotton T-Shirt", "Camiseta Básica 100% Algodão"),
+                ["Vestido Casual Estampado Floral"] = ("Casual Floral Print Dress", "Vestido Casual Estampado Floral"),
+                ["Pantalón Chino Slim Fit"] = ("Slim Fit Chino Pants", "Calça Chino Slim Fit"),
+                ["Sudadera con Capucha Oversize"] = ("Oversize Hooded Sweatshirt", "Moletom com Capuz Oversize"),
+                ["Consola de Videojuegos 1TB Edición Estándar"] = ("Video Game Console 1TB Standard Edition", "Console de Videogame 1TB Edição Padrão"),
+                ["Silla Gamer Ergonómica Reclinable"] = ("Ergonomic Reclining Gaming Chair", "Cadeira Gamer Ergonômica Reclinável"),
+                ["Teclado Mecánico RGB Switch Rojo"] = ("Mechanical Keyboard RGB Red Switch", "Teclado Mecânico RGB Switch Vermelho"),
+                ["Mouse Gamer Inalámbrico 16000 DPI"] = ("Wireless Gaming Mouse 16000 DPI", "Mouse Gamer Sem Fio 16000 DPI"),
+                ["Audífonos Gamer Surround 7.1"] = ("Gaming Headset Surround 7.1", "Headset Gamer Surround 7.1"),
+                ["Set de Maquillaje Profesional 12 Piezas"] = ("Professional Makeup Set 12 Pieces", "Kit de Maquiagem Profissional 12 Peças"),
+                ["Crema Hidratante Facial con Ácido Hialurónico"] = ("Facial Moisturizing Cream with Hyaluronic Acid", "Creme Hidratante Facial com Ácido Hialurônico"),
+                ["Perfume Floral 100ml"] = ("Floral Perfume 100ml", "Perfume Floral 100ml"),
+                ["Secadora de Cabello Iónica Profesional"] = ("Professional Ionic Hair Dryer", "Secador de Cabelo Iônico Profissional"),
+                ["Paleta de Sombras Tonos Tierra"] = ("Earth Tones Eyeshadow Palette", "Paleta de Sombras Tons Terrosos"),
+                ["Proteína Whey Sabor Vainilla 2kg"] = ("Whey Protein Vanilla Flavor 2kg", "Whey Protein Sabor Baunilha 2kg"),
+                ["Multivitamínico Diario 90 Cápsulas"] = ("Daily Multivitamin 90 Capsules", "Multivitamínico Diário 90 Cápsulas"),
+                ["Batido Sustituto de Comida Chocolate 1kg"] = ("Chocolate Meal Replacement Shake 1kg", "Shake Substituto de Refeição Chocolate 1kg"),
+                ["Barra Energética Caja x12"] = ("Energy Bar Box x12", "Barra Energética Caixa x12"),
+                ["Colágeno Hidrolizado en Polvo 300g"] = ("Hydrolyzed Collagen Powder 300g", "Colágeno Hidrolisado em Pó 300g"),
+            };
+
             foreach (KeyValuePair<string, (string Description, decimal Price, float Stock)[]> entry in productsByCategory)
             {
                 Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == entry.Key);
@@ -228,8 +282,16 @@ namespace Shopping.Data
                     continue;
                 }
 
+                (string CategoryEn, string CategoryPt) = categoryTranslations.TryGetValue(entry.Key, out (string En, string Pt) categoryNames)
+                    ? categoryNames
+                    : (entry.Key, entry.Key);
+
                 foreach ((string Description, decimal Price, float Stock) item in entry.Value)
                 {
+                    (string NameEn, string NamePt) = productNameTranslations.TryGetValue(item.Description, out (string En, string Pt) names)
+                        ? names
+                        : (item.Description, item.Description);
+
                     Product product = new()
                     {
                         Name = item.Description,
@@ -243,6 +305,21 @@ namespace Shopping.Data
                         ProductImages = new List<ProductImage>
                         {
                             new ProductImage { ImageId = Guid.Empty },
+                        },
+                        Translations = new List<ProductTranslation>
+                        {
+                            new ProductTranslation
+                            {
+                                LanguageCode = "en",
+                                Name = NameEn,
+                                Description = $"{NameEn}. Product from the {CategoryEn} category, available for immediate delivery.",
+                            },
+                            new ProductTranslation
+                            {
+                                LanguageCode = "pt",
+                                Name = NamePt,
+                                Description = $"{NamePt}. Produto da categoria {CategoryPt}, disponível para entrega imediata.",
+                            },
                         },
                     };
 
