@@ -115,6 +115,8 @@ namespace Shopping.Controllers
                 Date = DateTime.UtcNow,
                 QuantityChange = change,
                 ResultingStock = product.Stock,
+                DocumentType = model.DocumentType,
+                DocumentNumber = model.DocumentNumber,
                 Reason = model.Reason,
                 UserName = User.Identity.Name,
             });

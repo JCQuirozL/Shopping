@@ -5,6 +5,10 @@
 
 <h1 class="mb-4">Ajustar Inventario - @Model.ProductName</h1>
 
+<div class="alert alert-info">
+    <i class="fa-solid fa-circle-info"></i> Todo ajuste de inventario debe estar respaldado por un documento (factura de compra, pre-factura, orden de compra o traspaso entre almacenes). No se permiten ajustes sin esa referencia.
+</div>
+
 <div class="row">
     <div class="col-md-6">
         <form asp-action="AdjustStock" method="post">
@@ -24,12 +28,27 @@
             </div>
             <div class="form-group mb-2">
                 <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" />
+                <input asp-for="Quantity" class="form-control" type="number" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="DocumentType" class="control-label"></label>
+                <select asp-for="DocumentType" class="form-select">
+                    <option value="FacturaCompra">Factura de Compra</option>
+                    <option value="PreFactura">Pre-Factura</option>
+                    <option value="OrdenDeCompra">Orden de Compra</option>
+                    <option value="TraspasoEntreAlmacenes">Traspaso entre Almacenes</option>
+                </select>
+                <span asp-validation-for="DocumentType" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="DocumentNumber" class="control-label"></label>
+                <input asp-for="DocumentNumber" class="form-control" placeholder="Ej. FAC-00123, OC-2026-045..." />
+                <span asp-validation-for="DocumentNumber" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
                 <label asp-for="Reason" class="control-label"></label>
-                <input asp-for="Reason" class="form-control" placeholder="Ej. Reposición de proveedor, Merma, Ajuste de conteo..." />
+                <input asp-for="Reason" class="form-control" placeholder="Detalle adicional: proveedor, almacén origen/destino, etc." />
                 <span asp-validation-for="Reason" class="text-danger"></span>
             </div>
             <input type="submit" value="Guardar" class="btn btn-primary" />

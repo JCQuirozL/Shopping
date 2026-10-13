@@ -10,7 +10,7 @@
 
 <table class="table table-striped">
     <thead>
-        <tr><th>Fecha</th><th>Cambio</th><th>Existencia resultante</th><th>Motivo</th><th>Usuario</th></tr>
+        <tr><th>Fecha</th><th>Cambio</th><th>Existencia resultante</th><th>Documento</th><th>No. Documento</th><th>Motivo</th><th>Usuario</th></tr>
     </thead>
     <tbody>
         @foreach (var movement in Model)
@@ -19,6 +19,8 @@
                 <td>@movement.Date.ToString("dd/MM/yyyy HH:mm")</td>
                 <td class="@(movement.QuantityChange < 0 ? "text-danger" : "text-success")">@movement.QuantityChange.ToString("+0.##;-0.##")</td>
                 <td>@movement.ResultingStock.ToString("N0")</td>
+                <td><span class="count-pill">@movement.DocumentType</span></td>
+                <td>@movement.DocumentNumber</td>
                 <td>@movement.Reason</td>
                 <td>@movement.UserName</td>
             </tr>

@@ -522,32 +522,197 @@ h1, h2, h3, h4, h5, h6,
     margin-bottom: 0;
 }
 
-/* ===== Legacy Bootstrap 3 "panel" components (admin list pages) restyled ===== */
+/* ===== Modern admin list pages (replaces the old heavy "panel" look) ===== */
 .panel {
     background-color: #fff;
-    border: 1px solid #e3e1d5;
-    border-radius: 12px;
-    box-shadow: 2px 2px 10px 2px rgba(31, 42, 68, 0.06);
+    border: 1px solid #ece9e1;
+    border-radius: 14px;
+    box-shadow: 0 2px 14px rgba(31, 42, 68, 0.05);
     margin-bottom: 1.5rem;
     overflow: hidden;
 }
 
 .panel-heading {
-    background-color: var(--color-dark);
-    color: #fff;
-    padding: .9rem 1.25rem;
+    background-color: #fff;
+    color: var(--color-dark);
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid #f0efe9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem;
 }
 
 .panel-title {
     margin: 0;
     font-family: var(--font-heading);
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-dark);
+    display: flex;
+    align-items: center;
+    gap: .55rem;
 }
 
+    .panel-title::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--color-accent);
+    }
+
 .panel-body {
-    padding: 1.25rem;
+    padding: 1.1rem 1.4rem 1.4rem 1.4rem;
+}
+
+/* Admin tables: airy rows, no harsh grid, hover highlight instead of stripes */
+.panel-body table.table {
+    margin-bottom: 0;
+}
+
+    .panel-body table.table thead th {
+        border-bottom: 1px solid #ece9e1;
+        border-top: none;
+        color: #8a8f99;
+        text-transform: uppercase;
+        font-size: .72rem;
+        letter-spacing: .06em;
+        font-weight: 700;
+        padding: .6rem .9rem;
+        white-space: nowrap;
+    }
+
+    .panel-body table.table tbody td {
+        padding: .75rem .9rem;
+        vertical-align: middle;
+        border-top: 1px solid #f3f2ec;
+        border-bottom: none;
+        color: var(--color-text);
+    }
+
+    .panel-body table.table.table-striped tbody tr:nth-of-type(odd) {
+        background-color: transparent;
+    }
+
+    .panel-body table.table tbody tr:hover {
+        background-color: var(--color-bg-soft);
+    }
+
+.table-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid #ece9e1;
+    background-color: var(--color-bg-soft);
+}
+
+/* Soft, pastel status badges (color psychology: calm green = healthy stock,
+   warm amber = needs attention, muted red = out of stock / critical) */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .3rem .65rem;
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-badge-success {
+    background-color: #e4f6ec;
+    color: #1e8a4c;
+}
+
+.status-badge-warning {
+    background-color: #fff2e0;
+    color: #b9690f;
+}
+
+.status-badge-danger {
+    background-color: #fde8e8;
+    color: #c0392b;
+}
+
+.status-badge-neutral {
+    background-color: var(--color-bg-soft);
+    color: #6b7280;
+}
+
+.count-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .25rem .6rem;
+    border-radius: 999px;
+    background-color: var(--color-bg-soft);
+    color: var(--color-mid);
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.table-actions {
+    display: flex;
+    gap: .35rem;
+    justify-content: flex-end;
+}
+
+/* Admin toolbar above tables: search box + "new" button */
+.list-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+/* ===== Restyle jQuery DataTables chrome to match the rest of the app ===== */
+.dataTables_wrapper {
+    font-size: .92rem;
+}
+
+.dataTables_filter input,
+.dataTables_length select {
+    border: 1px solid #ddd9cc;
+    border-radius: 8px;
+    padding: .35rem .6rem;
+    outline: none;
+}
+
+    .dataTables_filter input:focus,
+    .dataTables_length select:focus {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-light);
+    }
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 8px !important;
+    border: none !important;
+    margin-left: .2rem;
+    color: var(--color-text) !important;
+}
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+        background: var(--color-accent) !important;
+        color: #fff !important;
+        border: none !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: var(--color-bg-soft) !important;
+        color: var(--color-text) !important;
+        border: none !important;
+    }
+
+.dataTables_info {
+    color: #8a8f99;
+    font-size: .82rem;
 }
 
 
@@ -808,6 +973,42 @@ footer.footer {
     box-shadow: 0 16px 40px rgba(21, 35, 61, .12);
     padding: 2.25rem;
 }
+
+.auth-card-wide {
+    max-width: 760px;
+}
+
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    font-size: .8rem;
+    letter-spacing: .05em;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: .6rem;
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-light) 55%, transparent 100%) 1;
+}
+
+    .form-section-title i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: var(--color-accent-light);
+        color: var(--color-accent-hover);
+        font-size: .75rem;
+    }
+
+    .form-section-title:first-of-type {
+        margin-top: 0;
+    }
 
 .auth-card_brand {
     display: flex;

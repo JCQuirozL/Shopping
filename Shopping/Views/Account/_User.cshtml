@@ -1,59 +1,60 @@
 ﻿@model Shopping.Models.EditUserViewModel
+@inject Shopping.Helpers.ITranslator Localizer
 
 <div class="row">
     <div class="col-md-6">
-        <div class="form-group">
-            <label asp-for="Document" class="control-label"></label>
+        <div class="form-group mb-3">
+            <label asp-for="Document" class="control-label">@Localizer["DocumentLabel"]</label>
             <input asp-for="Document" class="form-control" />
             <span asp-validation-for="Document" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="FirstName" class="control-label"></label>
+        <div class="form-group mb-3">
+            <label asp-for="FirstName" class="control-label">@Localizer["FirstNameLabel"]</label>
             <input asp-for="FirstName" class="form-control" />
             <span asp-validation-for="FirstName" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="LastName" class="control-label"></label>
+        <div class="form-group mb-3">
+            <label asp-for="LastName" class="control-label">@Localizer["LastNameLabel"]</label>
             <input asp-for="LastName" class="form-control" />
             <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="Address" class="control-label"></label>
+        <div class="form-group mb-3">
+            <label asp-for="Address" class="control-label">@Localizer["AddressLabel"]</label>
             <input asp-for="Address" class="form-control" />
             <span asp-validation-for="Address" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="PhoneNumber" class="control-label"></label>
+        <div class="form-group mb-3">
+            <label asp-for="PhoneNumber" class="control-label">@Localizer["PhoneLabel"]</label>
             <input asp-for="PhoneNumber" class="form-control" />
             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
     </div>    
     <div class="col-md-6">
-        <div class="form-group">
-            <label asp-for="ImageFile" class="control-label"></label>
+        <div class="form-group mb-3">
+            <label asp-for="ImageFile" class="control-label">@Localizer["PhotoLabel"]</label>
             <input asp-for="ImageFile" class="form-control" type="file" />
             <span asp-validation-for="ImageFile" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="CountryId" class="control-label"></label>
-            <select asp-for="CountryId" asp-items="Model.Countries" class="form-control"></select>
+        <div class="form-group mb-3">
+            <label asp-for="CountryId" class="control-label">@Localizer["CountryLabel"]</label>
+            <select asp-for="CountryId" asp-items="Model.Countries" class="form-select"></select>
             <span asp-validation-for="CountryId" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="StateId" class="control-label"></label>
-            <select asp-for="StateId" asp-items="Model.States" class="form-control"></select>
+        <div class="form-group mb-3">
+            <label asp-for="StateId" class="control-label">@Localizer["StateLabel"]</label>
+            <select asp-for="StateId" asp-items="Model.States" class="form-select"></select>
             <span asp-validation-for="StateId" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="CityId" class="control-label"></label>
-            <select asp-for="CityId" asp-items="Model.Cities" class="form-control"></select>
+        <div class="form-group mb-3">
+            <label asp-for="CityId" class="control-label">@Localizer["CityLabel"]</label>
+            <select asp-for="CityId" asp-items="Model.Cities" class="form-select"></select>
             <span asp-validation-for="CityId" class="text-danger"></span>
         </div>
     </div>    

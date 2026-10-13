@@ -145,7 +145,9 @@ namespace Shopping.Controllers
                 product.Description = model.Description;
                 product.Name = model.Name;
                 product.Price = model.Price;
-                product.Stock = model.Stock;
+                // Stock is intentionally not updated here: it must only change
+                // via Inventory > Ajustar Inventario, which keeps an audited
+                // InventoryMovement history instead of a silent overwrite.
                 _context.Update(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

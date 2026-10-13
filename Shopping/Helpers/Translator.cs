@@ -114,6 +114,31 @@ namespace Shopping.Helpers
             ["ShippingAddressLabel"] = new() { ["es"] = "Dirección de envío", ["en"] = "Shipping address", ["pt"] = "Endereço de entrega" },
             ["HistoryLabel"] = new() { ["es"] = "Historial", ["en"] = "History", ["pt"] = "Histórico" },
             ["BackButton"] = new() { ["es"] = "Volver", ["en"] = "Back", ["pt"] = "Voltar" },
+
+            // Account: register & shared user form
+            ["CreateAccountTitle"] = new() { ["es"] = "Crea tu cuenta", ["en"] = "Create your account", ["pt"] = "Crie sua conta" },
+            ["CreateAccountSubtitle"] = new() { ["es"] = "Únete gratis y descubre miles de productos con envío a todo el país.", ["en"] = "Join for free and discover thousands of products with nationwide shipping.", ["pt"] = "Cadastre-se grátis e descubra milhares de produtos com envio para todo o país." },
+            ["AccessDataSection"] = new() { ["es"] = "Datos de acceso", ["en"] = "Account details", ["pt"] = "Dados de acesso" },
+            ["PersonalShippingSection"] = new() { ["es"] = "Datos personales y envío", ["en"] = "Personal & shipping details", ["pt"] = "Dados pessoais e envio" },
+            ["CreateAccountButton"] = new() { ["es"] = "Crear Cuenta", ["en"] = "Create Account", ["pt"] = "Criar Conta" },
+            ["AlreadyHaveAccount"] = new() { ["es"] = "¿Ya tienes cuenta?", ["en"] = "Already have an account?", ["pt"] = "Já tem uma conta?" },
+            ["NoAccountYet"] = new() { ["es"] = "¿No tienes cuenta?", ["en"] = "Don't have an account?", ["pt"] = "Não tem uma conta?" },
+            ["RegisterFreeLink"] = new() { ["es"] = "Regístrate gratis", ["en"] = "Sign up for free", ["pt"] = "Cadastre-se grátis" },
+            ["WelcomeBackSubtitle"] = new() { ["es"] = "Bienvenido de nuevo, ingresa tus datos para continuar.", ["en"] = "Welcome back, enter your details to continue.", ["pt"] = "Bem-vindo de volta, digite seus dados para continuar." },
+            ["RememberMeLabel"] = new() { ["es"] = "Recordarme en este navegador", ["en"] = "Remember me on this browser", ["pt"] = "Lembrar de mim neste navegador" },
+            ["ForgotPasswordLink"] = new() { ["es"] = "¿Olvidaste tu contraseña?", ["en"] = "Forgot your password?", ["pt"] = "Esqueceu sua senha?" },
+            ["EmailLabel"] = new() { ["es"] = "Email", ["en"] = "Email", ["pt"] = "E-mail" },
+            ["PasswordLabel"] = new() { ["es"] = "Contraseña", ["en"] = "Password", ["pt"] = "Senha" },
+            ["PasswordConfirmLabel"] = new() { ["es"] = "Confirmación de contraseña", ["en"] = "Confirm password", ["pt"] = "Confirmar senha" },
+            ["DocumentLabel"] = new() { ["es"] = "Documento", ["en"] = "ID Document", ["pt"] = "Documento" },
+            ["FirstNameLabel"] = new() { ["es"] = "Nombres", ["en"] = "First Name", ["pt"] = "Nome" },
+            ["LastNameLabel"] = new() { ["es"] = "Apellidos", ["en"] = "Last Name", ["pt"] = "Sobrenome" },
+            ["AddressLabel"] = new() { ["es"] = "Dirección", ["en"] = "Address", ["pt"] = "Endereço" },
+            ["PhoneLabel"] = new() { ["es"] = "Teléfono", ["en"] = "Phone", ["pt"] = "Telefone" },
+            ["PhotoLabel"] = new() { ["es"] = "Foto", ["en"] = "Photo", ["pt"] = "Foto" },
+            ["CountryLabel"] = new() { ["es"] = "País", ["en"] = "Country", ["pt"] = "País" },
+            ["StateLabel"] = new() { ["es"] = "Estado / Departamento", ["en"] = "State / Province", ["pt"] = "Estado" },
+            ["CityLabel"] = new() { ["es"] = "Ciudad", ["en"] = "City", ["pt"] = "Cidade" },
         };
 
         public string this[string key]

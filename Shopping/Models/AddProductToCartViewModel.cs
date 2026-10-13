@@ -31,7 +31,7 @@ namespace Shopping.Models
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public float Quantity { get; set; }
         [DataType(DataType.MultilineText)]
-        [Display(Name = "Comentarios")]
+        [Display(Name = "Comentarios para este producto")]
         public string? Remarks { get; set; }
 
         public bool HasImages => ProductImages != null && ProductImages.Count > 0;

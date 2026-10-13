@@ -23,8 +23,11 @@
 
         <div class="form-group">
             <label asp-for="Stock" class="control-label"></label>
-            <input asp-for="Stock" class="form-control" />
-            <span asp-validation-for="Stock" class="text-danger"></span>
+            <input asp-for="Stock" class="form-control" readonly />
+            <small class="form-text text-muted">
+                El inventario no se edita aquí. Para sumar o restar existencias (con motivo registrado), ve a
+                <a asp-controller="Inventory" asp-action="AdjustStock" asp-route-id="@Model.Id">Inventario &rarr; Ajustar Inventario</a>.
+            </small>
         </div>
     </div>
 </div>

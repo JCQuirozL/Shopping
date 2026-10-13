@@ -1,59 +1,66 @@
 ﻿@model Shopping.Models.AddUserViewModel
+@inject Shopping.Helpers.ITranslator Localizer
 
 @{
     ViewData["Title"] = "Register";
 }
 
-<h2>Registrar</h2>
+<div class="auth-layout">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-card_brand">
+            <i class="fa-solid fa-bag-shopping icon-lg"></i>
+            <span>Shopping</span>
+        </div>
+        <h1 class="auth-card_title">@Localizer["CreateAccountTitle"]</h1>
+        <p class="auth-card_subtitle">@Localizer["CreateAccountSubtitle"]</p>
 
-<h4>Usuario</h4>
-<hr />
-<div class="row">
-    <div class="col-md-12">
         <form asp-action="Register" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="UserType" />
             <input type="hidden" asp-for="Countries" />
             <input type="hidden" asp-for="States" />
             <input type="hidden" asp-for="Cities" />
 
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
+            <h6 class="form-section-title"><i class="fa-solid fa-key"></i> @Localizer["AccessDataSection"]</h6>
+            <div class="form-group mb-3">
+                <label asp-for="Username" class="control-label">@Localizer["EmailLabel"]</label>
+                <input asp-for="Username" class="form-control" placeholder="tu@email.com" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Password" class="control-label"></label>
+                    <div class="form-group mb-3">
+                        <label asp-for="Password" class="control-label">@Localizer["PasswordLabel"]</label>
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="PasswordConfirm" class="control-label"></label>
+                    <div class="form-group mb-3">
+                        <label asp-for="PasswordConfirm" class="control-label">@Localizer["PasswordConfirmLabel"]</label>
                         <input asp-for="PasswordConfirm" class="form-control" />
                         <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
                     </div>
                 </div>
-            </div>    
+            </div>
 
+            <h6 class="form-section-title"><i class="fa-solid fa-truck"></i> @Localizer["PersonalShippingSection"]</h6>
             <partial name="_User" />
 
-            <div class="form-group mt-2">
-                <input type="submit" value="Registrar" class="btn btn-outline-primary" />
-            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3"><i class="fa-solid fa-user-plus"></i> @Localizer["CreateAccountButton"]</button>
         </form>
-    </div>
-</div>
 
-<div class="text-success">
-    <p>
-        @ViewBag.Message
-    </p>
+        @if (!string.IsNullOrWhiteSpace((string)ViewBag.Message))
+        {
+            <div class="alert alert-success mt-3">@ViewBag.Message</div>
+        }
+
+        <div class="auth-card_footer">
+            @Localizer["AlreadyHaveAccount"] <a asp-action="Login">@Localizer["Login"]</a>
+        </div>
+    </div>
 </div>
 
 
@@ -62,7 +69,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#CountryId").change(function () {
-                debugger;
                 $("#StateId").empty();
                 $("#StateId").append('<option value="0">[Selecciona un departamento/estado...]</option>');
                 $("#CityId").empty();
@@ -96,7 +102,6 @@
                     data: { stateId: $("#StateId").val() },
                     success: function (cities) {
                         $.each(cities, function (i, city) {
-                            debugger;
                             $("#CityId").append('<option value="'
                                 + city.id + '">'
                                 + city.name + '</option>');
